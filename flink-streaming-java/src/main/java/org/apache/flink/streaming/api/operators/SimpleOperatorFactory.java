@@ -37,6 +37,7 @@ public class SimpleOperatorFactory<OUT> extends AbstractStreamOperatorFactory<OU
 
     private final StreamOperator<OUT> operator;
 
+    // TODO: 根据传入的不同类型的operator，来创建不同类型的SimpleOperatorFactory
     /** Create a SimpleOperatorFactory from existed StreamOperator. */
     @SuppressWarnings("unchecked")
     public static <OUT> SimpleOperatorFactory<OUT> of(StreamOperator<OUT> operator) {

@@ -1985,17 +1985,22 @@ public class StreamExecutionEnvironment implements AutoCloseable {
             final String sourceName,
             @Nullable final TypeInformation<OUT> typeInfo,
             final Boundedness boundedness) {
+        // TODO: 非空检查，为null直接抛出空指针异常
         checkNotNull(function);
         checkNotNull(sourceName);
         checkNotNull(boundedness);
 
+        // TODO: [推测] 根据传入的function来获取返回结果的类型信息
         TypeInformation<OUT> resolvedTypeInfo =
                 getTypeInfo(function, sourceName, SourceFunction.class, typeInfo);
 
+        // TODO: 判断是否为一个可并行执行的流数据源
         boolean isParallel = function instanceof ParallelSourceFunction;
 
+        // TODO: 清理一下function
         clean(function);
 
+        // TODO: 在这里通过function来构建了Operator
         final StreamSource<OUT, ?> sourceOperator = new StreamSource<>(function);
         return new DataStreamSource<>(
                 this, resolvedTypeInfo, sourceOperator, isParallel, sourceName, boundedness);

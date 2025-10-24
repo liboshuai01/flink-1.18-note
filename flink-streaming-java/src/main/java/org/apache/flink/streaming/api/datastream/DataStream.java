@@ -571,6 +571,7 @@ public class DataStream<T> {
      */
     public <R> SingleOutputStreamOperator<R> map(MapFunction<T, R> mapper) {
 
+        // TODO: [推测] 根据用户传入的自定义function，来推断最后流的返回结果类型
         TypeInformation<R> outType =
                 TypeExtractor.getMapReturnTypes(
                         clean(mapper), getType(), Utils.getCallLocationName(), true);
@@ -591,6 +592,8 @@ public class DataStream<T> {
      */
     public <R> SingleOutputStreamOperator<R> map(
             MapFunction<T, R> mapper, TypeInformation<R> outputType) {
+        // TODO: `new StreamMap<>(clean(mapper))`使用用户传入的mapFunction来创建了一个StreamMap Operator
+        // FIXME: 1. clean都是做了些什么？ 2. new StreamMap() 都做了些什么？
         return transform("Map", outputType, new StreamMap<>(clean(mapper)));
     }
 
@@ -1161,6 +1164,8 @@ public class DataStream<T> {
             TypeInformation<R> outTypeInfo,
             OneInputStreamOperator<T, R> operator) {
 
+        // TODO: `SimpleOperatorFactory.of(operator)`根据传入的operator创建了一个SimpleOperatorFactory
+        // FIXME: 为什么要使用operator创建一个SimpleOperatorFactory，而不是直接使用Operator，SimpleOperatorFactory的作用是什么？
         return doTransform(operatorName, outTypeInfo, SimpleOperatorFactory.of(operator));
     }
 
@@ -1191,6 +1196,7 @@ public class DataStream<T> {
             TypeInformation<R> outTypeInfo,
             StreamOperatorFactory<R> operatorFactory) {
 
+        // FIXME: 为什么这里要get一下，但是不获取返回值？
         // read the output type of the input Transform to coax out errors about MissingTypeInfo
         transformation.getOutputType();
 

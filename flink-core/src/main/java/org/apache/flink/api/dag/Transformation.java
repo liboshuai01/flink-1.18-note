@@ -121,20 +121,24 @@ public abstract class Transformation<T> {
         return ID_COUNTER.incrementAndGet();
     }
 
+    // TODO: id、name、description的基本信息
     protected final int id;
 
     protected String name;
 
     protected String description;
 
+    // TODO: 输出结果类型
     protected TypeInformation<T> outputType;
     // This is used to handle MissingTypeInfo. As long as the outputType has not been queried
     // it can still be changed using setOutputType(). Afterwards an exception is thrown when
     // trying to change the output type.
     protected boolean typeUsed;
 
+    // TODO: 并行度配置
     private int parallelism;
 
+    // TODO: 最大并行度配置
     /**
      * The maximum parallelism for this stream transformation. It defines the upper limit for
      * dynamic scaling and the number of key groups used for partitioned state.
@@ -183,6 +187,7 @@ public abstract class Transformation<T> {
 
     protected long bufferTimeout = -1;
 
+    // TODO: 槽位共享组
     private Optional<SlotSharingGroup> slotSharingGroup;
 
     @Nullable private String coLocationGroupKey;
@@ -606,6 +611,7 @@ public abstract class Transformation<T> {
         return predecessorsCache.computeIfAbsent(this, key -> getTransitivePredecessorsInternal());
     }
 
+    // TODO: 一个抽象方法，用于获取此transformation之前的所有transformation集合
     /**
      * Returns the {@link Transformation transformations} that are the immediate predecessors of the
      * current transformation in the transformation graph.
