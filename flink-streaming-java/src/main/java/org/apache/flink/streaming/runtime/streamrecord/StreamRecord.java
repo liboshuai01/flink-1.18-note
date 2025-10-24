@@ -19,6 +19,7 @@ package org.apache.flink.streaming.runtime.streamrecord;
 
 import org.apache.flink.annotation.Internal;
 
+// TODO: 就是value值的一个包装类，多加了一个可选的时间戳字段
 /**
  * One value in a data stream. This stores the value and an optional associated timestamp.
  *
