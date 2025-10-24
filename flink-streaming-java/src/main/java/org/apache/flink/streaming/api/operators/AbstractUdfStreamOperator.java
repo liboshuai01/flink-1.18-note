@@ -57,6 +57,7 @@ public abstract class AbstractUdfStreamOperator<OUT, F extends Function>
 
     public AbstractUdfStreamOperator(F userFunction) {
         this.userFunction = requireNonNull(userFunction);
+        // TODO: 不允许传入的userFunction同时继承实现CheckpointedFunction和ListCheckpointed，否则报错
         checkUdfCheckpointingPreconditions();
     }
 

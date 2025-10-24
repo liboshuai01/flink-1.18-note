@@ -1164,8 +1164,8 @@ public class DataStream<T> {
             TypeInformation<R> outTypeInfo,
             OneInputStreamOperator<T, R> operator) {
 
-        // TODO: `SimpleOperatorFactory.of(operator)`根据传入的operator创建了一个SimpleOperatorFactory
-        // FIXME: 为什么要使用operator创建一个SimpleOperatorFactory，而不是直接使用Operator，SimpleOperatorFactory的作用是什么？
+        // TODO: `SimpleOperatorFactory.of(operator)`是因为operator本身是不完整的，后续如果要使用还需要对operator进行一些set操作。
+        // 所以通过将operator放入operatorFactory，这样可以保证通过`createStreamOperator()`方法获取到operator之前必须进行一些set操作。
         return doTransform(operatorName, outTypeInfo, SimpleOperatorFactory.of(operator));
     }
 

@@ -26,6 +26,7 @@ import org.apache.flink.streaming.runtime.tasks.StreamTask;
 import java.io.Serializable;
 
 /**
+ * TODO: 用于创建 StreamOperator 的工厂接口
  * A factory to create {@link StreamOperator}.
  *
  * @param <OUT> The output type of the operator
