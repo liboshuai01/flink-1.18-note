@@ -1226,10 +1226,16 @@ public class DataStream<T> {
                 new SingleOutputStreamOperator(environment, resultTransform);
 
         // TODO: 将当前transformation存入到environment中的transformations集合中，以便后续执行时可以遍历到所有transformation
+        // TODO: 需要注意的是，source源的时候有没有添加source源的transformation到env的transformation列表中
         getExecutionEnvironment().addOperator(resultTransform);
 
         // TODO: 返回这个新的DataStream
         return returnStream;
+        // TODO: 到这里`SingleOutputStreamOperator<String> mapDataStream = dataStream.map(String::toLowerCase);`这行代码的内容已经执行完毕了，我们来总结一下。
+        // TODO: 1. 通过用户传入的mapFunction实现类对象创建了一个不完整的Operator，然后又使用Operator创建了一个OperatorFactory
+        // TODO: 2. 使用持有Operator的factory创建了一个OneInputTransformation，并将上一个source源的transformation存入到自己transformation的input成员变量中
+        // TODO: 3. 创建出来的新transformation会被添加到env的transformation集合中，以便最后生成StreamGraph图时遍历使用
+        // TODO: 4. 使用之前的env和新创建的transformation，创建了一个全新的DataStream，最后将这个DataStream返回给用户，以便用户可以链式调用后面的其他算子api
     }
 
     /**
