@@ -52,11 +52,13 @@ public class LocalStreamEnvironment extends StreamExecutionEnvironment {
     }
 
     private static Configuration validateAndGetConfiguration(final Configuration configuration) {
+        // TODO: 做了一下检查，要求如果是使用的为LocalStreamEnvironment，那么contextEnvironmentFactory和threadLocalContextEnvironmentFactory都必须为null，否则抛异常
         if (!areExplicitEnvironmentsAllowed()) {
             throw new InvalidProgramException(
                     "The LocalStreamEnvironment cannot be used when submitting a program through a client, "
                             + "or running in a TestEnvironment context.");
         }
+        // TODO: 配置`execution.target`为`local`，`execution.attached`为true
         final Configuration effectiveConfiguration = new Configuration(checkNotNull(configuration));
         effectiveConfiguration.set(DeploymentOptions.TARGET, "local");
         effectiveConfiguration.set(DeploymentOptions.ATTACHED, true);

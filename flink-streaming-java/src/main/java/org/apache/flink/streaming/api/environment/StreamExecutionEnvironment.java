@@ -344,6 +344,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * executed in any execution mode.
      *
      * @param executionMode the desired execution mode.
+     *
      * @return The execution environment of your application.
      */
     @PublicEvolving
@@ -361,7 +362,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * defines the number of key groups used for partitioned state.
      *
      * @param maxParallelism Maximum degree of parallelism to be used for the program., with {@code
-     *     0 < maxParallelism <= 2^15}.
+     *         0 < maxParallelism <= 2^15}.
      */
     public StreamExecutionEnvironment setMaxParallelism(int maxParallelism) {
         Preconditions.checkArgument(
@@ -533,7 +534,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param interval Time interval between state checkpoints in milliseconds.
      * @param mode The checkpointing mode, selecting between "exactly once" and "at least once"
-     *     guaranteed.
+     *         guaranteed.
      */
     public StreamExecutionEnvironment enableCheckpointing(long interval, CheckpointingMode mode) {
         checkpointCfg.setCheckpointingMode(mode);
@@ -554,10 +555,11 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param interval Time interval between state checkpoints in millis.
      * @param mode The checkpointing mode, selecting between "exactly once" and "at least once"
-     *     guaranteed.
+     *         guaranteed.
      * @param force If true checkpointing will be enabled for iterative jobs as well.
+     *
      * @deprecated Use {@link #enableCheckpointing(long, CheckpointingMode)} instead. Forcing
-     *     checkpoints will be removed in the future.
+     *         checkpoints will be removed in the future.
      */
     @Deprecated
     @SuppressWarnings("deprecation")
@@ -662,8 +664,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * backends persist during a checkpoint.
      *
      * @return This StreamExecutionEnvironment itself, to allow chaining of function calls.
+     *
      * @see #getStateBackend()
-     * @see CheckpointConfig#setCheckpointStorage( org.apache.flink.runtime.state.CheckpointStorage)
+     * @see CheckpointConfig#setCheckpointStorage(org.apache.flink.runtime.state.CheckpointStorage)
      */
     @PublicEvolving
     public StreamExecutionEnvironment setStateBackend(StateBackend backend) {
@@ -707,8 +710,10 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * (job/local/cluster).
      *
      * @param enabled true if enable the change log for state backend explicitly, otherwise disable
-     *     the change log.
+     *         the change log.
+     *
      * @return This StreamExecutionEnvironment itself, to allow chaining of function calls.
+     *
      * @see #isChangelogStateBackendEnabled()
      */
     @PublicEvolving
@@ -721,8 +726,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * Gets the enable status of change log for state backend.
      *
      * @return a {@link TernaryBoolean} for the enable status of change log for state backend. Could
-     *     be {@link TernaryBoolean#UNDEFINED} if user never specify this by calling {@link
-     *     #enableChangelogStateBackend(boolean)}.
+     *         be {@link TernaryBoolean#UNDEFINED} if user never specify this by calling {@link
+     *         #enableChangelogStateBackend(boolean)}.
+     *
      * @see #enableChangelogStateBackend(boolean)
      */
     @PublicEvolving
@@ -735,6 +741,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * provided when triggered.
      *
      * @return This StreamExecutionEnvironment itself, to allow chaining of function calls.
+     *
      * @see #getDefaultSavepointDirectory()
      */
     @PublicEvolving
@@ -748,6 +755,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * provided when triggered.
      *
      * @return This StreamExecutionEnvironment itself, to allow chaining of function calls.
+     *
      * @see #getDefaultSavepointDirectory()
      */
     @PublicEvolving
@@ -761,6 +769,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * provided when triggered.
      *
      * @return This StreamExecutionEnvironment itself, to allow chaining of function calls.
+     *
      * @see #getDefaultSavepointDirectory()
      */
     @PublicEvolving
@@ -808,9 +817,10 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * defined in the configuration) should be used.
      *
      * @param numberOfExecutionRetries The number of times the system will try to re-execute failed
-     *     tasks.
+     *         tasks.
+     *
      * @deprecated This method will be replaced by {@link #setRestartStrategy}. The {@link
-     *     RestartStrategies#fixedDelayRestart(int, Time)} contains the number of execution retries.
+     *         RestartStrategies#fixedDelayRestart(int, Time)} contains the number of execution retries.
      */
     @Deprecated
     @PublicEvolving
@@ -823,6 +833,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * -1} indicates that the system default value (as defined in the configuration) should be used.
      *
      * @return The number of times the system will try to re-execute failed tasks.
+     *
      * @deprecated This method will be replaced by {@link #getRestartStrategy}.
      */
     @Deprecated
@@ -924,16 +935,17 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * should change it using {@link ExecutionConfig#setAutoWatermarkInterval(long)}.
      *
      * @param characteristic The time characteristic.
+     *
      * @deprecated In Flink 1.12 the default stream time characteristic has been changed to {@link
-     *     TimeCharacteristic#EventTime}, thus you don't need to call this method for enabling
-     *     event-time support anymore. Explicitly using processing-time windows and timers works in
-     *     event-time mode. If you need to disable watermarks, please use {@link
-     *     ExecutionConfig#setAutoWatermarkInterval(long)}. If you are using {@link
-     *     TimeCharacteristic#IngestionTime}, please manually set an appropriate {@link
-     *     WatermarkStrategy}. If you are using generic "time window" operations (for example {@link
-     *     org.apache.flink.streaming.api.datastream.KeyedStream#timeWindow(org.apache.flink.streaming.api.windowing.time.Time)}
-     *     that change behaviour based on the time characteristic, please use equivalent operations
-     *     that explicitly specify processing time or event time.
+     *         TimeCharacteristic#EventTime}, thus you don't need to call this method for enabling
+     *         event-time support anymore. Explicitly using processing-time windows and timers works in
+     *         event-time mode. If you need to disable watermarks, please use {@link
+     *         ExecutionConfig#setAutoWatermarkInterval(long)}. If you are using {@link
+     *         TimeCharacteristic#IngestionTime}, please manually set an appropriate {@link
+     *         WatermarkStrategy}. If you are using generic "time window" operations (for example {@link
+     *         org.apache.flink.streaming.api.datastream.KeyedStream#timeWindow(org.apache.flink.streaming.api.windowing.time.Time)}
+     *         that change behaviour based on the time characteristic, please use equivalent operations
+     *         that explicitly specify processing time or event time.
      */
     @PublicEvolving
     @Deprecated
@@ -950,7 +962,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * Gets the time characteristic.
      *
      * @deprecated See {@link #setStreamTimeCharacteristic(TimeCharacteristic)} for deprecation
-     *     notice.
+     *         notice.
      */
     @PublicEvolving
     @Deprecated
@@ -1110,9 +1122,11 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param from The number to start at (inclusive)
      * @param to The number to stop at (inclusive)
+     *
      * @return A data stream, containing all number in the [from, to] interval
+     *
      * @deprecated Use {@link #fromSequence(long, long)} instead to create a new data stream that
-     *     contains {@link org.apache.flink.api.connector.source.lib.NumberSequenceSource}.
+     *         contains {@link org.apache.flink.api.connector.source.lib.NumberSequenceSource}.
      */
     @Deprecated
     public DataStreamSource<Long> generateSequence(long from, long to) {
@@ -1166,6 +1180,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param data The array of elements to create the data stream from.
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream representing the given array of elements
      */
     @SafeVarargs
@@ -1199,6 +1214,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param type The based class type in the collection.
      * @param data The array of elements to create the data stream from.
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream representing the given array of elements
      */
     @SafeVarargs
@@ -1235,6 +1251,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param data The collection of elements to create the data stream from.
      * @param <OUT> The generic type of the returned data stream.
+     *
      * @return The data stream representing the given collection
      */
     public <OUT> DataStreamSource<OUT> fromCollection(Collection<OUT> data) {
@@ -1271,6 +1288,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param data The collection of elements to create the data stream from
      * @param typeInfo The TypeInformation for the produced data stream
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream representing the given collection
      */
     public <OUT> DataStreamSource<OUT> fromCollection(
@@ -1298,9 +1316,11 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param data The iterator of elements to create the data stream from
      * @param type The class of the data produced by the iterator. Must not be a generic class.
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream representing the elements in the iterator
+     *
      * @see #fromCollection(java.util.Iterator,
-     *     org.apache.flink.api.common.typeinfo.TypeInformation)
+     *         org.apache.flink.api.common.typeinfo.TypeInformation)
      */
     public <OUT> DataStreamSource<OUT> fromCollection(Iterator<OUT> data, Class<OUT> type) {
         return fromCollection(data, TypeExtractor.getForClass(type));
@@ -1321,6 +1341,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param data The iterator of elements to create the data stream from
      * @param typeInfo The TypeInformation for the produced data stream
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream representing the elements in the iterator
      */
     public <OUT> DataStreamSource<OUT> fromCollection(
@@ -1343,6 +1364,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param iterator The iterator that produces the elements of the data stream
      * @param type The class of the data produced by the iterator. Must not be a generic class.
      * @param <OUT> The type of the returned data stream
+     *
      * @return A data stream representing the elements in the iterator
      */
     public <OUT> DataStreamSource<OUT> fromParallelCollection(
@@ -1365,6 +1387,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param iterator The iterator that produces the elements of the data stream
      * @param typeInfo The TypeInformation for the produced data stream.
      * @param <OUT> The type of the returned data stream
+     *
      * @return A data stream representing the elements in the iterator
      */
     public <OUT> DataStreamSource<OUT> fromParallelCollection(
@@ -1393,17 +1416,19 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * the source exits, thus having no checkpoints after that point.
      *
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path").
+     *         "hdfs://host:port/file/path").
+     *
      * @return The data stream that represents the data read from the given file as text lines
+     *
      * @deprecated Use {@code
-     *     FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
-     *     example of reading a file using a simple {@code TextLineInputFormat}:
-     *     <pre>{@code
-     * FileSource<String> source =
-     *        FileSource.forRecordStreamFormat(
-     *           new TextLineInputFormat(), new Path("/foo/bar"))
-     *        .build();
-     * }</pre>
+     *         FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
+     *         example of reading a file using a simple {@code TextLineInputFormat}:
+     *         <pre>{@code
+     *         FileSource<String> source =
+     *                FileSource.forRecordStreamFormat(
+     *                   new TextLineInputFormat(), new Path("/foo/bar"))
+     *                .build();
+     *         }</pre>
      */
     @Deprecated
     public DataStreamSource<String> readTextFile(String filePath) {
@@ -1422,18 +1447,20 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * the source exits, thus having no checkpoints after that point.
      *
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path")
+     *         "hdfs://host:port/file/path")
      * @param charsetName The name of the character set used to read the file
+     *
      * @return The data stream that represents the data read from the given file as text lines
+     *
      * @deprecated Use {@code
-     *     FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
-     *     example of reading a file using a simple {@code TextLineInputFormat}:
-     *     <pre>{@code
-     * FileSource<String> source =
-     *        FileSource.forRecordStreamFormat(
-     *         new TextLineInputFormat("UTF-8"), new Path("/foo/bar"))
-     *        .build();
-     * }</pre>
+     *         FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
+     *         example of reading a file using a simple {@code TextLineInputFormat}:
+     *         <pre>{@code
+     *         FileSource<String> source =
+     *                FileSource.forRecordStreamFormat(
+     *                 new TextLineInputFormat("UTF-8"), new Path("/foo/bar"))
+     *                .build();
+     *         }</pre>
      */
     @Deprecated
     public DataStreamSource<String> readTextFile(String filePath, String charsetName) {
@@ -1468,19 +1495,21 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * the source exits, thus having no checkpoints after that point.
      *
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path")
+     *         "hdfs://host:port/file/path")
      * @param inputFormat The input format used to create the data stream
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream that represents the data read from the given file
+     *
      * @deprecated Use {@code
-     *     FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
-     *     example of reading a file using a simple {@code TextLineInputFormat}:
-     *     <pre>{@code
-     * FileSource<String> source =
-     *        FileSource.forRecordStreamFormat(
-     *           new TextLineInputFormat(), new Path("/foo/bar"))
-     *        .build();
-     * }</pre>
+     *         FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
+     *         example of reading a file using a simple {@code TextLineInputFormat}:
+     *         <pre>{@code
+     *         FileSource<String> source =
+     *                FileSource.forRecordStreamFormat(
+     *                   new TextLineInputFormat(), new Path("/foo/bar"))
+     *                .build();
+     *         }</pre>
      */
     @Deprecated
     public <OUT> DataStreamSource<OUT> readFile(FileInputFormat<OUT> inputFormat, String filePath) {
@@ -1495,17 +1524,19 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param inputFormat The input format used to create the data stream
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path")
+     *         "hdfs://host:port/file/path")
      * @param watchType The mode in which the source should operate, i.e. monitor path and react to
-     *     new data, or process once and exit
+     *         new data, or process once and exit
      * @param interval In the case of periodic path monitoring, this specifies the interval (in
-     *     millis) between consecutive path scans
+     *         millis) between consecutive path scans
      * @param filter The files to be excluded from the processing
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream that represents the data read from the given file
+     *
      * @deprecated Use {@link FileInputFormat#setFilesFilter(FilePathFilter)} to set a filter and
-     *     {@link StreamExecutionEnvironment#readFile(FileInputFormat, String, FileProcessingMode,
-     *     long)}
+     *         {@link StreamExecutionEnvironment#readFile(FileInputFormat, String, FileProcessingMode,
+     *         long)}
      */
     @PublicEvolving
     @Deprecated
@@ -1555,23 +1586,25 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param inputFormat The input format used to create the data stream
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path")
+     *         "hdfs://host:port/file/path")
      * @param watchType The mode in which the source should operate, i.e. monitor path and react to
-     *     new data, or process once and exit
+     *         new data, or process once and exit
      * @param interval In the case of periodic path monitoring, this specifies the interval (in
-     *     millis) between consecutive path scans
+     *         millis) between consecutive path scans
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream that represents the data read from the given file
+     *
      * @deprecated Use {@code
-     *     FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
-     *     example of reading a file using a simple {@code TextLineInputFormat}:
-     *     <pre>{@code
-     * FileSource<String> source =
-     *        FileSource.forRecordStreamFormat(
-     *           new TextLineInputFormat(), new Path("/foo/bar"))
-     *        .monitorContinuously(Duration.of(10, SECONDS))
-     *        .build();
-     * }</pre>
+     *         FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
+     *         example of reading a file using a simple {@code TextLineInputFormat}:
+     *         <pre>{@code
+     *         FileSource<String> source =
+     *                FileSource.forRecordStreamFormat(
+     *                   new TextLineInputFormat(), new Path("/foo/bar"))
+     *                .monitorContinuously(Duration.of(10, SECONDS))
+     *                .build();
+     *         }</pre>
      */
     @Deprecated
     @PublicEvolving
@@ -1598,16 +1631,18 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * given path. The file will be read with the system's default character set.
      *
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path/")
+     *         "hdfs://host:port/file/path/")
      * @param intervalMillis The interval of file watching in milliseconds
      * @param watchType The watch type of file stream. When watchType is {@link
-     *     org.apache.flink.streaming.api.functions.source.FileMonitoringFunction.WatchType#ONLY_NEW_FILES},
-     *     the system processes only new files. {@link
-     *     org.apache.flink.streaming.api.functions.source.FileMonitoringFunction.WatchType#REPROCESS_WITH_APPENDED}
-     *     means that the system re-processes all contents of appended file. {@link
-     *     org.apache.flink.streaming.api.functions.source.FileMonitoringFunction.WatchType#PROCESS_ONLY_APPENDED}
-     *     means that the system processes only appended contents of files.
+     *         org.apache.flink.streaming.api.functions.source.FileMonitoringFunction.WatchType#ONLY_NEW_FILES},
+     *         the system processes only new files. {@link
+     *         org.apache.flink.streaming.api.functions.source.FileMonitoringFunction.WatchType#REPROCESS_WITH_APPENDED}
+     *         means that the system re-processes all contents of appended file. {@link
+     *         org.apache.flink.streaming.api.functions.source.FileMonitoringFunction.WatchType#PROCESS_ONLY_APPENDED}
+     *         means that the system processes only appended contents of files.
+     *
      * @return The DataStream containing the given directory.
+     *
      * @deprecated Use {@link #readFile(FileInputFormat, String, FileProcessingMode, long)} instead.
      */
     @Deprecated
@@ -1640,24 +1675,26 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param inputFormat The input format used to create the data stream
      * @param filePath The path of the file, as a URI (e.g., "file:///some/local/file" or
-     *     "hdfs://host:port/file/path")
+     *         "hdfs://host:port/file/path")
      * @param watchType The mode in which the source should operate, i.e. monitor path and react to
-     *     new data, or process once and exit
+     *         new data, or process once and exit
      * @param typeInformation Information on the type of the elements in the output stream
      * @param interval In the case of periodic path monitoring, this specifies the interval (in
-     *     millis) between consecutive path scans
+     *         millis) between consecutive path scans
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream that represents the data read from the given file
+     *
      * @deprecated Use {@code
-     *     FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
-     *     example of reading a file using a simple {@code TextLineInputFormat}:
-     *     <pre>{@code
-     * FileSource<String> source =
-     *        FileSource.forRecordStreamFormat(
-     *           new TextLineInputFormat(), new Path("/foo/bar"))
-     *        .monitorContinuously(Duration.of(10, SECONDS))
-     *        .build();
-     * }</pre>
+     *         FileSource#forRecordStreamFormat()/forBulkFileFormat()/forRecordFileFormat() instead}. An
+     *         example of reading a file using a simple {@code TextLineInputFormat}:
+     *         <pre>{@code
+     *         FileSource<String> source =
+     *                FileSource.forRecordStreamFormat(
+     *                   new TextLineInputFormat(), new Path("/foo/bar"))
+     *                .monitorContinuously(Duration.of(10, SECONDS))
+     *                .build();
+     *         }</pre>
      */
     @Deprecated
     @PublicEvolving
@@ -1688,13 +1725,15 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param hostname The host name which a server socket binds
      * @param port The port number which a server socket binds. A port number of 0 means that the
-     *     port number is automatically allocated.
+     *         port number is automatically allocated.
      * @param delimiter A character which splits received strings into records
      * @param maxRetry The maximal retry interval in seconds while the program waits for a socket
-     *     that is temporarily down. Reconnection is initiated every second. A number of 0 means
-     *     that the reader is immediately terminated, while a negative value ensures retrying
-     *     forever.
+     *         that is temporarily down. Reconnection is initiated every second. A number of 0 means
+     *         that the reader is immediately terminated, while a negative value ensures retrying
+     *         forever.
+     *
      * @return A data stream containing the strings received from the socket
+     *
      * @deprecated Use {@link #socketTextStream(String, int, String, long)} instead.
      */
     @Deprecated
@@ -1713,12 +1752,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param hostname The host name which a server socket binds
      * @param port The port number which a server socket binds. A port number of 0 means that the
-     *     port number is automatically allocated.
+     *         port number is automatically allocated.
      * @param delimiter A string which splits received strings into records
      * @param maxRetry The maximal retry interval in seconds while the program waits for a socket
-     *     that is temporarily down. Reconnection is initiated every second. A number of 0 means
-     *     that the reader is immediately terminated, while a negative value ensures retrying
-     *     forever.
+     *         that is temporarily down. Reconnection is initiated every second. A number of 0 means
+     *         that the reader is immediately terminated, while a negative value ensures retrying
+     *         forever.
+     *
      * @return A data stream containing the strings received from the socket
      */
     @PublicEvolving
@@ -1737,9 +1777,11 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param hostname The host name which a server socket binds
      * @param port The port number which a server socket binds. A port number of 0 means that the
-     *     port number is automatically allocated.
+     *         port number is automatically allocated.
      * @param delimiter A character which splits received strings into records
+     *
      * @return A data stream containing the strings received from the socket
+     *
      * @deprecated Use {@link #socketTextStream(String, int, String)} instead.
      */
     @Deprecated
@@ -1755,8 +1797,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param hostname The host name which a server socket binds
      * @param port The port number which a server socket binds. A port number of 0 means that the
-     *     port number is automatically allocated.
+     *         port number is automatically allocated.
      * @param delimiter A string which splits received strings into records
+     *
      * @return A data stream containing the strings received from the socket
      */
     @PublicEvolving
@@ -1771,7 +1814,8 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param hostname The host name which a server socket binds
      * @param port The port number which a server socket binds. A port number of 0 means that the
-     *     port number is automatically allocated.
+     *         port number is automatically allocated.
+     *
      * @return A data stream containing the strings received from the socket
      */
     @PublicEvolving
@@ -1800,6 +1844,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param inputFormat The input format used to create the data stream
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream that represents the data created by the input format
      */
     @PublicEvolving
@@ -1825,6 +1870,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param inputFormat The input format used to create the data stream
      * @param typeInfo The information about the type of the output type
      * @param <OUT> The type of the returned data stream
+     *
      * @return The data stream that represents the data created by the input format
      */
     @PublicEvolving
@@ -1911,11 +1957,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param function the user defined function
      * @param <OUT> type of the returned stream
+     *
      * @return the data stream constructed
+     *
      * @deprecated This method relies on the {@link
-     *     org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
-     *     removed. Use the {@link #fromSource(Source, WatermarkStrategy, String)} method based on
-     *     the new {@link org.apache.flink.api.connector.source.Source} API instead.
+     *         org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
+     *         removed. Use the {@link #fromSource(Source, WatermarkStrategy, String)} method based on
+     *         the new {@link org.apache.flink.api.connector.source.Source} API instead.
      */
     @Deprecated
     public <OUT> DataStreamSource<OUT> addSource(SourceFunction<OUT> function) {
@@ -1930,11 +1978,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param function the user defined function
      * @param sourceName Name of the data source
      * @param <OUT> type of the returned stream
+     *
      * @return the data stream constructed
+     *
      * @deprecated This method relies on the {@link
-     *     org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
-     *     removed. Use the {@link #fromSource(Source, WatermarkStrategy, String)} method based on
-     *     the new {@link org.apache.flink.api.connector.source.Source} API instead.
+     *         org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
+     *         removed. Use the {@link #fromSource(Source, WatermarkStrategy, String)} method based on
+     *         the new {@link org.apache.flink.api.connector.source.Source} API instead.
      */
     @Deprecated
     public <OUT> DataStreamSource<OUT> addSource(SourceFunction<OUT> function, String sourceName) {
@@ -1949,11 +1999,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param function the user defined function
      * @param <OUT> type of the returned stream
      * @param typeInfo the user defined type information for the stream
+     *
      * @return the data stream constructed
+     *
      * @deprecated This method relies on the {@link
-     *     org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
-     *     removed. Use the {@link #fromSource(Source, WatermarkStrategy, String, TypeInformation)}
-     *     method based on the new {@link org.apache.flink.api.connector.source.Source} API instead.
+     *         org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
+     *         removed. Use the {@link #fromSource(Source, WatermarkStrategy, String, TypeInformation)}
+     *         method based on the new {@link org.apache.flink.api.connector.source.Source} API instead.
      */
     @Deprecated
     public <OUT> DataStreamSource<OUT> addSource(
@@ -1970,11 +2022,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param sourceName Name of the data source
      * @param <OUT> type of the returned stream
      * @param typeInfo the user defined type information for the stream
+     *
      * @return the data stream constructed
+     *
      * @deprecated This method relies on the {@link
-     *     org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
-     *     removed. Use the {@link #fromSource(Source, WatermarkStrategy, String, TypeInformation)}
-     *     method based on the new {@link org.apache.flink.api.connector.source.Source} API instead.
+     *         org.apache.flink.streaming.api.functions.source.SourceFunction} API, which is due to be
+     *         removed. Use the {@link #fromSource(Source, WatermarkStrategy, String, TypeInformation)}
+     *         method based on the new {@link org.apache.flink.api.connector.source.Source} API instead.
      */
     @Deprecated
     public <OUT> DataStreamSource<OUT> addSource(
@@ -2026,6 +2080,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param source the user defined source
      * @param sourceName Name of the data source
      * @param <OUT> type of the returned stream
+     *
      * @return the data stream constructed
      */
     @PublicEvolving
@@ -2052,6 +2107,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @param sourceName Name of the data source
      * @param <OUT> type of the returned stream
      * @param typeInfo the user defined type information for the stream
+     *
      * @return the data stream constructed
      */
     @Experimental
@@ -2080,6 +2136,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * <p>The program execution will be logged and displayed with a generated default name.
      *
      * @return The result of the job execution, containing elapsed time and accumulators.
+     *
      * @throws Exception which occurs during job execution.
      */
     public JobExecutionResult execute() throws Exception {
@@ -2094,7 +2151,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * <p>The program execution will be logged and displayed with the provided name
      *
      * @param jobName Desired name of the job
+     *
      * @return The result of the job execution, containing elapsed time and accumulators.
+     *
      * @throws Exception which occurs during job execution.
      */
     public JobExecutionResult execute(String jobName) throws Exception {
@@ -2126,7 +2185,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * forwarding them to a message queue.
      *
      * @param streamGraph the stream graph representing the transformations
+     *
      * @return The result of the job execution, containing elapsed time and accumulators.
+     *
      * @throws Exception which occurs during job execution.
      */
     @Internal
@@ -2200,7 +2261,8 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * <p>The program execution will be logged and displayed with a generated default name.
      *
      * @return A {@link JobClient} that can be used to communicate with the submitted job, completed
-     *     on submission succeeded.
+     *         on submission succeeded.
+     *
      * @throws Exception which occurs during job execution.
      */
     @PublicEvolving
@@ -2216,8 +2278,10 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * <p>The program execution will be logged and displayed with the provided name
      *
      * @param jobName desired name of the job
+     *
      * @return A {@link JobClient} that can be used to communicate with the submitted job, completed
-     *     on submission succeeded.
+     *         on submission succeeded.
+     *
      * @throws Exception which occurs during job execution.
      */
     @PublicEvolving
@@ -2234,8 +2298,10 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * results or forwarding them to a message queue.
      *
      * @param streamGraph the stream graph representing the transformations
+     *
      * @return A {@link JobClient} that can be used to communicate with the submitted job, completed
-     *     on submission succeeded.
+     *         on submission succeeded.
+     *
      * @throws Exception which occurs during job execution.
      */
     @Internal
@@ -2282,6 +2348,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * times.
      *
      * @param clearTransformations Whether or not to clear previously registered transformations
+     *
      * @return The stream graph representing the transformations
      */
     @Internal
@@ -2319,6 +2386,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * <p>This method does not access or clear the previously registered transformations.
      *
      * @param transformations list of transformations that the graph should contain
+     *
      * @return The stream graph representing the transformations
      */
     @Internal
@@ -2335,7 +2403,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
         // We copy the transformation so that newly added transformations cannot intervene with the
         // stream graph generation.
         return new StreamGraphGenerator(
-                        new ArrayList<>(transformations), config, checkpointCfg, configuration)
+                new ArrayList<>(transformations), config, checkpointCfg, configuration)
                 .setStateBackend(defaultStateBackend)
                 .setChangelogStateBackendEnabled(changelogStateBackendEnabled)
                 .setSavepointDir(defaultSavepointDirectory)
@@ -2444,12 +2512,21 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * duplicated options.
      *
      * @param configuration The configuration to instantiate the environment with.
+     *
      * @return The execution environment of the context in which the program is executed.
      */
     public static StreamExecutionEnvironment getExecutionEnvironment(Configuration configuration) {
-        return Utils.resolveFactory(threadLocalContextEnvironmentFactory, contextEnvironmentFactory)
-                .map(factory -> factory.createExecutionEnvironment(configuration))
-                .orElseGet(() -> StreamExecutionEnvironment.createLocalEnvironment(configuration));
+        return
+                // TODO: 优先使用threadLocalContextEnvironmentFactory创建Optional包装类，为它为空，才使用contextEnvironmentFactory
+                Utils
+                        .resolveFactory(
+                                threadLocalContextEnvironmentFactory,
+                                contextEnvironmentFactory)
+                        // TODO: 如果Optional包装类中的factory不为null，则调用这个factory来创建执行环境
+                        .map(factory -> factory.createExecutionEnvironment(configuration))
+                        // TODO: 如果前面两个返回factory都为null，则直接创建本地执行环境
+                        .orElseGet(() -> StreamExecutionEnvironment.createLocalEnvironment(
+                                configuration));
     }
 
     /**
@@ -2470,6 +2547,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * will use the parallelism specified in the parameter.
      *
      * @param parallelism The parallelism for the local environment.
+     *
      * @return A local execution environment with the specified parallelism.
      */
     public static LocalStreamEnvironment createLocalEnvironment(int parallelism) {
@@ -2483,6 +2561,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      *
      * @param parallelism The parallelism for the local environment.
      * @param configuration Pass a custom configuration into the cluster
+     *
      * @return A local execution environment with the specified parallelism.
      */
     public static LocalStreamEnvironment createLocalEnvironment(
@@ -2498,12 +2577,15 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * program in a multi-threaded fashion in the same JVM as the environment was created in.
      *
      * @param configuration Pass a custom configuration into the cluster
+     *
      * @return A local execution environment with the specified parallelism.
      */
     public static LocalStreamEnvironment createLocalEnvironment(Configuration configuration) {
         if (configuration.getOptional(CoreOptions.DEFAULT_PARALLELISM).isPresent()) {
+            // TODO: 判断传入的configuration是否存在`parallelism.default`这个配置项，如果存在则直接使用传入的配置
             return new LocalStreamEnvironment(configuration);
         } else {
+            // TODO: 如果传入的configuration中不存在`parallelism.default`这个配置项，则将这个配置项添加上去，值为当前运行集群的cpu核心数（逻辑处理器数量）
             Configuration copyOfConfiguration = new Configuration();
             copyOfConfiguration.addAll(configuration);
             copyOfConfiguration.set(CoreOptions.DEFAULT_PARALLELISM, defaultLocalParallelism);
@@ -2541,11 +2623,12 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * set explicitly via {@link #setParallelism}.
      *
      * @param host The host name or address of the master (JobManager), where the program should be
-     *     executed.
+     *         executed.
      * @param port The port of the master (JobManager), where the program should be executed.
      * @param jarFiles The JAR files with code that needs to be shipped to the cluster. If the
-     *     program uses user-defined functions, user-defined input formats, or any libraries, those
-     *     must be provided in the JAR files.
+     *         program uses user-defined functions, user-defined input formats, or any libraries, those
+     *         must be provided in the JAR files.
+     *
      * @return A remote environment that executes the program on a cluster.
      */
     public static StreamExecutionEnvironment createRemoteEnvironment(
@@ -2559,12 +2642,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * accessible from the cluster. The execution will use the specified parallelism.
      *
      * @param host The host name or address of the master (JobManager), where the program should be
-     *     executed.
+     *         executed.
      * @param port The port of the master (JobManager), where the program should be executed.
      * @param parallelism The parallelism to use during the execution.
      * @param jarFiles The JAR files with code that needs to be shipped to the cluster. If the
-     *     program uses user-defined functions, user-defined input formats, or any libraries, those
-     *     must be provided in the JAR files.
+     *         program uses user-defined functions, user-defined input formats, or any libraries, those
+     *         must be provided in the JAR files.
+     *
      * @return A remote environment that executes the program on a cluster.
      */
     public static StreamExecutionEnvironment createRemoteEnvironment(
@@ -2580,12 +2664,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * accessible from the cluster. The execution will use the specified parallelism.
      *
      * @param host The host name or address of the master (JobManager), where the program should be
-     *     executed.
+     *         executed.
      * @param port The port of the master (JobManager), where the program should be executed.
      * @param clientConfig The configuration used by the client that connects to the remote cluster.
      * @param jarFiles The JAR files with code that needs to be shipped to the cluster. If the
-     *     program uses user-defined functions, user-defined input formats, or any libraries, those
-     *     must be provided in the JAR files.
+     *         program uses user-defined functions, user-defined input formats, or any libraries, those
+     *         must be provided in the JAR files.
+     *
      * @return A remote environment that executes the program on a cluster.
      */
     public static StreamExecutionEnvironment createRemoteEnvironment(
@@ -2641,7 +2726,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * org.apache.flink.api.common.functions.RuntimeContext#getDistributedCache()}.
      *
      * @param filePath The path of the file, as a URI (e.g. "file:///some/path" or
-     *     "hdfs://host:port/and/path")
+     *         "hdfs://host:port/and/path")
      * @param name The name under which the file is registered.
      */
     public void registerCachedFile(String filePath, String name) {
@@ -2660,7 +2745,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * org.apache.flink.api.common.functions.RuntimeContext#getDistributedCache()}.
      *
      * @param filePath The path of the file, as a URI (e.g. "file:///some/path" or
-     *     "hdfs://host:port/and/path")
+     *         "hdfs://host:port/and/path")
      * @param name The name under which the file is registered.
      * @param executable flag indicating whether the file should be executable
      */
@@ -2675,7 +2760,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * RemoteEnvironment.
      *
      * @return True, if it is possible to explicitly instantiate a LocalEnvironment or a
-     *     RemoteEnvironment, false otherwise.
+     *         RemoteEnvironment, false otherwise.
      */
     @Internal
     public static boolean areExplicitEnvironmentsAllowed() {
