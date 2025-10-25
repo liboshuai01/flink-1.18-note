@@ -15,6 +15,9 @@ import org.apache.flink.util.Collector;
 
 public class WordCount {
     public static void main(String[] args) throws Exception {
+        // TODO: idea中启动被创建StreamExecutionEnvironment的子类LocalStreamEnvironment
+        // TODO: 然后设置一些必需配置项目，例如设置并行度为cpu核心数、部署目标为local、提交作业的方式为附加模式
+        // TODO: 此时env中只有这些简单的配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         DataStreamSource<String> dataStream = env.socketTextStream("localhost", 7777);
         SingleOutputStreamOperator<String> mapDataStream = dataStream.map(String::toLowerCase);
