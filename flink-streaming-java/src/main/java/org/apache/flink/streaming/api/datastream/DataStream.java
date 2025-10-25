@@ -576,6 +576,11 @@ public class DataStream<T> {
                 TypeExtractor.getMapReturnTypes(
                         clean(mapper), getType(), Utils.getCallLocationName(), true);
 
+        // TODO: 前面的addSource中的传入的function是使用的flink官方编写的socketTextFunction
+        // TODO: 这次使用的function，就是我们用户自己通过实现MapFunction接口来编写的function实现类了
+        // TODO: WordCount中`String::toLowerCase`这种写法，是一种java 1.8 中新特性lambda表达式。
+        // TODO: 本质上和我们自己实现function接口编写一个类，完成里面map方法逻辑，然后传入类对象是一样的。
+        // TODO: 只不过因为MapFunction接口是一个函数式接口，所以这里可以使用lambda表达式来进行简写。
         return map(mapper, outType);
     }
 
@@ -592,8 +597,7 @@ public class DataStream<T> {
      */
     public <R> SingleOutputStreamOperator<R> map(
             MapFunction<T, R> mapper, TypeInformation<R> outputType) {
-        // TODO: `new StreamMap<>(clean(mapper))`使用用户传入的mapFunction来创建了一个StreamMap Operator
-        // FIXME: 1. clean都是做了些什么？ 2. new StreamMap() 都做了些什么？
+        // TODO: `new StreamMap<>(clean(mapper))` 创建一个不完整的Operator，存入用户传入的mapFunction实例对象，并设置算子链策略为always（尽量将算子合并到一起）
         return transform("Map", outputType, new StreamMap<>(clean(mapper)));
     }
 
@@ -1165,7 +1169,7 @@ public class DataStream<T> {
             OneInputStreamOperator<T, R> operator) {
 
         // TODO: `SimpleOperatorFactory.of(operator)`是因为operator本身是不完整的，后续如果要使用还需要对operator进行一些set操作。
-        // 所以通过将operator放入operatorFactory，这样可以保证通过`createStreamOperator()`方法获取到operator之前必须进行一些set操作。
+        // TODO: 所以通过将operator放入operatorFactory，这样可以保证通过`createStreamOperator()`方法获取到operator之前必须进行一些set操作。
         return doTransform(operatorName, outTypeInfo, SimpleOperatorFactory.of(operator));
     }
 
@@ -1200,8 +1204,14 @@ public class DataStream<T> {
         // read the output type of the input Transform to coax out errors about MissingTypeInfo
         transformation.getOutputType();
 
+        // TODO: 1. 设置transformation的id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改
+        // TODO: 2. 将上一个transformation存入自己这个transformation的input成员变量中
+        // TODO: 3. 存入OperatorFactory到自己这个transformation的成员变量中
+        // TODO: 也就是说当前这个transformation不但持有一个OperatorFactory，还持有上一个的transformation，而上一个transformation中也包含之前的socket的OperationFactory
         OneInputTransformation<T, R> resultTransform =
                 new OneInputTransformation<>(
+                        // TODO: 注意这里的transformation是我们之前通过socket设置的，它的名字为Socket Stream
+                        // TODO: 里面有一个OperatorFactory，Factory中有一个Operator，Operator就是上一个通过SocketTextFunction创建的StreamSource
                         this.transformation,
                         operatorName,
                         operatorFactory,
@@ -1209,12 +1219,16 @@ public class DataStream<T> {
                         environment.getParallelism(),
                         false);
 
+        // TODO: 这里使用之前的environment和新创建出来的transformation，重新new了一个DataStream
+        // TODO: 而不是复用当前这个DateStream对象，将新的transformation存进去。
         @SuppressWarnings({"unchecked", "rawtypes"})
         SingleOutputStreamOperator<R> returnStream =
                 new SingleOutputStreamOperator(environment, resultTransform);
 
+        // TODO: 将当前transformation存入到environment中的transformations集合中，以便后续执行时可以遍历到所有transformation
         getExecutionEnvironment().addOperator(resultTransform);
 
+        // TODO: 返回这个新的DataStream
         return returnStream;
     }
 

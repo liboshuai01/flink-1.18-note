@@ -48,8 +48,10 @@ public class OneInputTransformation<IN, OUT> extends PhysicalTransformation<OUT>
 
     private final StreamOperatorFactory<OUT> operatorFactory;
 
+    // TODO: 状态分区选择器
     private KeySelector<IN, ?> stateKeySelector;
 
+    // TODO: 状态key的类型
     private TypeInformation<?> stateKeyType;
 
     /**
@@ -117,8 +119,15 @@ public class OneInputTransformation<IN, OUT> extends PhysicalTransformation<OUT>
             TypeInformation<OUT> outputType,
             int parallelism,
             boolean parallelismConfigured) {
+        // TODO: 设置id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改
         super(name, outputType, parallelism, parallelismConfigured);
+        // TODO: 将上一个transformation，作为输出存放到input成员变量变量中
+        // TODO: 我们上一个env.socketTextStream代码创建的transformation，即input是一个LegacySourceTransformation
+        // TODO: 它和本类OneInputTransformation都继承至PhysicalTransformation，但是之前的LegacySourceTransformation却没有input这个成员变量
+        // TODO: 因为LegacySourceTransformation是作为source源的，source当然没有所谓的前一个transformation传过来了，它只有自己这第一个transformation
+        // TODO: OneInputTransformation相比于LegacySourceTransformation多了input、stateKeySelector、stateKeyType这三个成员变量
         this.input = input;
+        // TODO: 同样的还是存放持有不完整operator的factory到成员变量中
         this.operatorFactory = operatorFactory;
     }
 

@@ -29,7 +29,9 @@ public class StreamMap<IN, OUT> extends AbstractUdfStreamOperator<OUT, MapFuncti
     private static final long serialVersionUID = 1L;
 
     public StreamMap(MapFunction<IN, OUT> mapper) {
+        // TODO: 调用父类构造方法，就用户传入的function存入operator中
         super(mapper);
+        // TODO: 设置算子链的策略为ALWAYS，即尽量总是将多个算子合并到一起
         chainingStrategy = ChainingStrategy.ALWAYS;
     }
 
