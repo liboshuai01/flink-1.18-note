@@ -44,6 +44,7 @@ import java.util.List;
 @Internal
 public class OneInputTransformation<IN, OUT> extends PhysicalTransformation<OUT> {
 
+    // TODO: 上一个DataStream对象产生的Transformation
     private final Transformation<IN> input;
 
     private final StreamOperatorFactory<OUT> operatorFactory;

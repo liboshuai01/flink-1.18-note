@@ -635,6 +635,7 @@ public class DataStream<T> {
      */
     public <R> SingleOutputStreamOperator<R> flatMap(
             FlatMapFunction<T, R> flatMapper, TypeInformation<R> outputType) {
+        // TODO: `new StreamFlatMap<>(clean(flatMapper))`使用传入的flatMapFunction实现类对象创建一个不完整的Operator
         return transform("Flat Map", outputType, new StreamFlatMap<>(clean(flatMapper)));
     }
 
@@ -1208,6 +1209,7 @@ public class DataStream<T> {
         // TODO: 2. 将上一个transformation存入自己这个transformation的input成员变量中
         // TODO: 3. 存入OperatorFactory到自己这个transformation的成员变量中
         // TODO: 也就是说当前这个transformation不但持有一个OperatorFactory，还持有上一个的transformation，而上一个transformation中也包含之前的socket的OperationFactory
+        // TODO: 这样的数据存储结构，是我们可以生成有向无环图（DAG）的关键，逐一向上查找形成链条。
         OneInputTransformation<T, R> resultTransform =
                 new OneInputTransformation<>(
                         // TODO: 注意这里的transformation是我们之前通过socket设置的，它的名字为Socket Stream
@@ -1225,8 +1227,9 @@ public class DataStream<T> {
         SingleOutputStreamOperator<R> returnStream =
                 new SingleOutputStreamOperator(environment, resultTransform);
 
-        // TODO: 将当前transformation存入到environment中的transformations集合中，以便后续执行时可以遍历到所有transformation
-        // TODO: 需要注意的是，source源的时候有没有添加source源的transformation到env的transformation列表中
+        // TODO: 将当前transformation存入到environment中的transformations集合中，以便后续生成StreamGraph时可以遍历到所有transformation
+        // TODO: 需要注意的是，source源的时候是没有调用transform方法的，所以env中的transformation列表中是没有source源的transformation的。
+        // TODO: 你可以会觉得困惑了，这样不就少了一个Transformation没有被保存吗？其实不然因为第二个transformation中有input成员变量保存上一个transformation，所以还是能获取到source的transformation
         getExecutionEnvironment().addOperator(resultTransform);
 
         // TODO: 返回这个新的DataStream
