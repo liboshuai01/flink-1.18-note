@@ -62,6 +62,7 @@ public abstract class PhysicalTransformation<T> extends Transformation<T> {
             TypeInformation<T> outputType,
             int parallelism,
             boolean parallelismConfigured) {
+        // TODO: 设置id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改
         super(name, outputType, parallelism, parallelismConfigured);
     }
 

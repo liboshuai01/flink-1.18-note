@@ -219,11 +219,17 @@ public abstract class Transformation<T> {
             TypeInformation<T> outputType,
             int parallelism,
             boolean parallelismConfigured) {
+        // TODO: 自增获取id
         this.id = getNewNodeId();
+        // TODO: 设置transformation名字
         this.name = Preconditions.checkNotNull(name);
+        // TODO: 设置输出结果类型
         this.outputType = outputType;
+        // TODO: 设置并行度
         this.parallelism = parallelism;
+        // TODO: 设置槽位共享组，当前初始化为空
         this.slotSharingGroup = Optional.empty();
+        // TODO: 设置并行度可是可在运行时更改
         this.parallelismConfigured =
                 parallelismConfigured && parallelism != ExecutionConfig.PARALLELISM_DEFAULT;
     }

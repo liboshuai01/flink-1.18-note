@@ -1724,6 +1724,8 @@ public class StreamExecutionEnvironment implements AutoCloseable {
     @PublicEvolving
     public DataStreamSource<String> socketTextStream(
             String hostname, int port, String delimiter, long maxRetry) {
+        // TODO: 就是类似与我们自己编写`env.addSource(FlinkKafkaConsumer<>("my-topic", new SimpleStringSchema(), props));`代码，只是这个sourceFunction是Flink官方编写的
+        // TODO: addSource已经过期了，现在推荐使用fromSource。原来基于sourceFunction接口的老source，正在被基于Source接口的新source所代替
         return addSource(
                 new SocketTextStreamFunction(hostname, port, delimiter, maxRetry), "Socket Stream");
     }
@@ -1977,6 +1979,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
     @Deprecated
     public <OUT> DataStreamSource<OUT> addSource(
             SourceFunction<OUT> function, String sourceName, TypeInformation<OUT> typeInfo) {
+        // TODO: 传入`Boundedness.CONTINUOUS_UNBOUNDED`确定为无界流，为typeInfo为null
         return addSource(function, sourceName, typeInfo, Boundedness.CONTINUOUS_UNBOUNDED);
     }
 
@@ -2000,8 +2003,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
         // TODO: 清理一下function
         clean(function);
 
-        // TODO: 在这里通过function来构建了Operator
+        // TODO: 在这里通过function来构建了Operator，Operator里面只有Function，其他啥都没有
         final StreamSource<OUT, ?> sourceOperator = new StreamSource<>(function);
+        // TODO: 将env、typeInfo、新构造的未完整的Operation等参数传入DataStreamSource的构造方法中（DataStreamSource也是一个DataStream）
         return new DataStreamSource<>(
                 this, resolvedTypeInfo, sourceOperator, isParallel, sourceName, boundedness);
     }

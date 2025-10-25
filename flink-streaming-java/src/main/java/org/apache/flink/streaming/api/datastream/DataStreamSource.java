@@ -62,8 +62,12 @@ public class DataStreamSource<T> extends SingleOutputStreamOperator<T> {
             boolean isParallel,
             String sourceName,
             Boundedness boundedness) {
+        // TODO: 将environment、transformation都存放DataStreamSource自己的成员变量中（最终是通过父类DataStream的构造方法来完成的）
         super(
                 environment,
+                // TODO: 将operator传入来创建一个LegacySourceTransformation
+                // TODO: 这样就形成了DataStream（对应DataStreamSource）持有Transformation（对应LegacySourceTransformation），
+                // TODO: 而Transformation又持有OperatorFactory (中的Operator对应StreamSource）的链条
                 new LegacySourceTransformation<>(
                         sourceName,
                         operator,
@@ -71,11 +75,22 @@ public class DataStreamSource<T> extends SingleOutputStreamOperator<T> {
                         environment.getParallelism(),
                         boundedness,
                         false));
-
+        // TODO: 将是否为并行source存入自己的成员变量中，isParallel是DataStreamSource与父类SingleOutputStreamOperator的唯一区别（多出的）
         this.isParallel = isParallel;
+        // TODO: 如果不为并行source，则直接设置并行度为1
         if (!isParallel) {
+            // TODO: 调用父类SingleOutputStreamOperator的方法，将并行度设置到自己持有的transformation中
             setParallelism(1);
         }
+        // TODO: 到这里WordCount中的`DataStreamSource<String> dataStream = env.socketTextStream("localhost", 7777);`这行代码就已经执行完毕了
+        // TODO: 最后我们来总结一下`DataStreamSource<String> dataStream = env.socketTextStream("localhost", 7777);`这行代码都做了哪些事情：
+        // TODO: 1. 创建了一个DataStream，并往DataStream中设置了environment和transformation
+        // TODO: 2. transformation中又持有一个OperatorFactory（内部的Operator为StreamSource）
+        // TODO: 3. OperatorFactory中又持有Operator（名为StreamSource）是通过flink自己最开始自带的一个SocketTextStreamFunction构建出来的
+
+        // TODO: DataStream就是一个面向用户的api，方便用户进行链式编程。用户.map().filter()最后都会形成一个个transformation存放在DataStream的集合中。
+        // TODO: transformation是最后用于执行作业的详细施工图，它里面有并行度、结果输出类型、是否为无界流和最重要的Operator，后面会根据transforation合集创建StreamGraph。
+        // TODO: Operator是具体的施工队，干活的工人。它最后会被StreamTask调用来其中用户传入的function来进行数据处理。
     }
 
     /**

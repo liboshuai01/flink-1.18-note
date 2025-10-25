@@ -66,8 +66,14 @@ public class LegacySourceTransformation<T> extends PhysicalTransformation<T>
             int parallelism,
             Boundedness boundedness,
             boolean parallelismConfigured) {
+        // TODO: 设置id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改
         super(name, outputType, parallelism, parallelismConfigured);
+        // TODO: 通过operator创建一个SimpleOperatorFactory。SimpleOperatorFactory是用于规范化后续获取使用Operator前的一些标准流程
+        // TODO: 前面已经说过了，这里面传入的Operator并不是一个完整的Operator，里面只包含了传入的function。
+        // TODO: 通过Factory，我们可以要求后续如果要获取Operator来使用，就必须要通过factory中的createStreamOperator(StreamOperatorParameters<OUT> parameters)方法来获取。
+        // TODO: 而createStreamOperator方法又要求必须传入指定的参数，以便来完成相应的set配置等操作得到一个完整可用的Operator。这就是Factory的作用。
         this.operatorFactory = checkNotNull(SimpleOperatorFactory.of(operator));
+        // TODO: 设置是否为无界流
         this.boundedness = checkNotNull(boundedness);
     }
 
