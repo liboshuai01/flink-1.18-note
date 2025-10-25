@@ -58,11 +58,14 @@ public class LocalStreamEnvironment extends StreamExecutionEnvironment {
                     "The LocalStreamEnvironment cannot be used when submitting a program through a client, "
                             + "or running in a TestEnvironment context.");
         }
-        // TODO: 配置`execution.target`为`local`，`execution.attached`为true
+        // TODO: 配置`execution.target`为`local`（提交部署的目标为本地），`execution.attached`为true（提交方式为附加，不是分离的）
         final Configuration effectiveConfiguration = new Configuration(checkNotNull(configuration));
         effectiveConfiguration.set(DeploymentOptions.TARGET, "local");
         effectiveConfiguration.set(DeploymentOptions.ATTACHED, true);
         return effectiveConfiguration;
+        // TODO: 到这里`StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();`这行代码就执行结束了
+        // TODO: 我们可以看到本地idea启动时，就是创建了实现类LocalStreamEnvironment实例对象，然后这个实例对象中持有config和configuration两个配置对象
+        // TODO: 而配置对象被初始化设置了一些诸如并行度、提交目标地、提交方式等配置参数，其他什么事情都没有做了。
     }
 
     @Override
