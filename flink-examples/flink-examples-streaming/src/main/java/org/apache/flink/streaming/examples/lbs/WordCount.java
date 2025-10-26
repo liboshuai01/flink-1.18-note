@@ -26,7 +26,8 @@ public class WordCount {
         // TODO: 另外还将这个新的transformation存放到了env中的transformations这个list中，以便后续生成StreamGraph图遍历使用
         // TODO: 同样这个新的transformation中也持有一个OperatorFactory, OperatorFactory又持有Operator, Operator仅持有用户传入的MapFunction
         SingleOutputStreamOperator<String> mapDataStream = dataStream.map(String::toLowerCase);
-        // TODO: .flatMap() 这一步和上一步`.map()`所作的事情是如出一辙的
+        // TODO: .flatMap() 这一步和上一步`.map()`所作的事情是如出一辙的，最后得到一个新的DataStream对象
+        // TODO: DataStream中的env的transformations集合现在有了两个元素了，一个是上面map得到Transformation，一个是现在flatMap得到的transformation
         SingleOutputStreamOperator<Tuple2<String, Integer>> flatMapDataStream = mapDataStream.flatMap(new Splitter());
         KeyedStream<Tuple2<String, Integer>, String> keyedDataStream = flatMapDataStream.keyBy(value -> value.f0);
         WindowedStream<Tuple2<String, Integer>, String, TimeWindow> windowDataStream = keyedDataStream.window(
