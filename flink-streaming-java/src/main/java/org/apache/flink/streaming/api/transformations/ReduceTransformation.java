@@ -53,7 +53,9 @@ public final class ReduceTransformation<IN, K> extends PhysicalTransformation<IN
             KeySelector<IN, K> keySelector,
             TypeInformation<K> keyTypeInfo,
             boolean parallelismConfigured) {
+        // TODO: 配置name、输出结果类型、并行度等
         super(name, input.getOutputType(), parallelism, parallelismConfigured);
+        // TODO: 存放上一个transformation、具体的聚合逻辑function、分区选择器、key的类型信息
         this.input = input;
         this.reducer = reducer;
         this.keySelector = keySelector;

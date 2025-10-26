@@ -32,13 +32,8 @@ public class WordCount {
         // TODO: 还是新创建了一个类型为KeyedStream的DataStream，DataStream里面持有上一个DataStream的env、新构建的Transformation（类型为PartitionTransformation)、用户传入的分区器、key类型
         // TODO: 需要注意PartitionTransformation并没有具体的算子Operator，而是包含了用户传入的分区器、数据交互模式，它不代表具体计算任务Operator，还是两个计算任务直接连接的属性
         KeyedStream<Tuple2<String, Integer>, String> keyedDataStream = flatMapDataStream.keyBy(value -> value.f0);
-        // TODO: 注意：这里返回的WindowStream并不是DataStream，它只是持有了上一个类型为keyStream的DataStream。
-        // TODO: 同时WindowStream里面也并没有创建新的Transformation，也就没有创建新的OperatorFactory、Operator的必要了，取而代替创建的是WindowOperatorBuilder。
-        // TODO: WindowOperatorBuilder里面持有用户传入的窗口分配器、默认窗口触发器、上个流的分区选择器、上个流env的config等信息。
-        WindowedStream<Tuple2<String, Integer>, String, TimeWindow> windowDataStream = keyedDataStream.window(
-                TumblingProcessingTimeWindows.of(Time.seconds(5)));
-        // TODO: 这里又通过聚合api将前面的假DataStream流WindowedStream转换回DataStream了，
-        SingleOutputStreamOperator<Tuple2<String, Integer>> sumDataStream = windowDataStream.sum(1);
+        // TODO:
+        SingleOutputStreamOperator<Tuple2<String, Integer>> sumDataStream = keyedDataStream.sum(1);
         DataStreamSink<Tuple2<String, Integer>> dataStreamSink = sumDataStream.print();
 
         env.execute("word count demo");

@@ -59,6 +59,7 @@ public class SingleOutputStreamOperator<T> extends DataStream<T> {
 
     protected SingleOutputStreamOperator(
             StreamExecutionEnvironment environment, Transformation<T> transformation) {
+        // TODO: 仅仅是将environment、transformation存放到自己的成员变量中
         super(environment, transformation);
     }
 

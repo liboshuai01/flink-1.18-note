@@ -777,6 +777,9 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      * @return The transformed DataStream.
      */
     public SingleOutputStreamOperator<T> reduce(ReduceFunction<T> reducer) {
+        // TODO: 还是和之前类似的套路，也是创建一个新的transformation，持有上一个transformation
+        // TODO: 不同是这次没有创建OperatorFactory、Operator了，而是直接将聚合计算的Function存放到了transformation中
+        // TODO: 同时也多之前map、filter没有的分区器，也被保存到了transformation中
         ReduceTransformation<T, KEY> reduce =
                 new ReduceTransformation<>(
                         "Keyed Reduce",
@@ -787,9 +790,16 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
                         getKeyType(),
                         false);
 
+        // TODO: 这一步是和之前map、filter里面调用的doTransform方法中的一样，还是将新创建的transformation放到env中的集合中
         getExecutionEnvironment().addOperator(reduce);
 
+        // TODO: 创建一个新的DataStream对象，存入上一个流的env和新创建得来的transformation
         return new SingleOutputStreamOperator<>(getExecutionEnvironment(), reduce);
+        // TODO: 到这里，最外面的`keyedDataStream.sum(1)`这行代码就已经执行完毕了，照例我们来分析总结一下。
+        // TODO: 其中.sum和最开始.socketTextStream有一些类似，也是不需要用户自己传入function，而是根据用户传入的参数来构建内置的function
+        // TODO: 区别的地方在于，这里创建的transformation中持有的不是OperatorFactory对象，而直接是function对象。
+        // TODO: 其他流程都是一样的，也需要创建一个新的transformation，里面并存放之前的transformation（多存放了分区选择器相关的对象）。
+        // TODO: 也要将新的transformation加入的env中的集合中，最后也要通过上一个流中的env、transformation来创建一个新的DataStream对象
     }
 
     /**
@@ -802,6 +812,8 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      * @return The transformed DataStream.
      */
     public SingleOutputStreamOperator<T> sum(int positionToSum) {
+        // TODO: SumAggregator就是一个包含flink官方编写的sum聚合逻辑function的类，通过用户传入的参数和上一个KeyStream流的输出结果类型来获取的。
+        // TODO: 使用SumAggregator的目的，是为了简化用户的开发难度，通过sum这种api直接让用户快速完成求和逻辑，而无需编写自定义function。
         return aggregate(new SumAggregator<>(positionToSum, getType(), getExecutionConfig()));
     }
 
