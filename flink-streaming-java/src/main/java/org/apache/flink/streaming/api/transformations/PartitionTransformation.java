@@ -75,9 +75,13 @@ public class PartitionTransformation<T> extends Transformation<T> {
             Transformation<T> input,
             StreamPartitioner<T> partitioner,
             StreamExchangeMode exchangeMode) {
+        // TODO: 设置transformation的id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改等信息
         super("Partition", input.getOutputType(), input.getParallelism());
+        // TODO: 存入之前的transformation
         this.input = input;
+        // TODO: 存入partitioner, 里面包含分区选择器，和最大并行度配置
         this.partitioner = partitioner;
+        // TODO: 存入数据交互模式
         this.exchangeMode = checkNotNull(exchangeMode);
     }
 

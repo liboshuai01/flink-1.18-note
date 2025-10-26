@@ -111,6 +111,7 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
      * @param keySelector Function for determining state partitions
      */
     public KeyedStream(DataStream<T> dataStream, KeySelector<T, KEY> keySelector) {
+        // TODO: 将上一个DataStream的env、新构建的Transformation、分区器、key类型都存放到成员变量
         this(
                 dataStream,
                 keySelector,
@@ -128,10 +129,14 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
             DataStream<T> dataStream,
             KeySelector<T, KEY> keySelector,
             TypeInformation<KEY> keyType) {
+        // TODO: 将上一个DataStream的env、新构建的Transformation、分区器、key类型都存放到成员变量
         this(
                 dataStream,
+                // TODO: 设置transformation的id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改等信息
+                // TODO: 持有上一个transformation、分区器、数据交互模式
                 new PartitionTransformation<>(
                         dataStream.getTransformation(),
+                        // TODO: 包含分区选择器、最大并行度
                         new KeyGroupStreamPartitioner<>(
                                 keySelector,
                                 StreamGraphGenerator.DEFAULT_LOWER_BOUND_MAX_PARALLELISM)),
@@ -156,9 +161,11 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
             PartitionTransformation<T> partitionTransformation,
             KeySelector<T, KEY> keySelector,
             TypeInformation<KEY> keyType) {
-
+        // TODO: 还是和之前一样，将上一个DataStream的env、新构建的Transformation都存放起来
         super(stream.getExecutionEnvironment(), partitionTransformation);
+        // TODO: 存放分区器
         this.keySelector = clean(keySelector);
+        // TODO: 存放key类型
         this.keyType = validateKeyType(keyType);
     }
 

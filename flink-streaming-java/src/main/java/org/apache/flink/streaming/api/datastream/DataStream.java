@@ -289,6 +289,7 @@ public class DataStream<T> {
      */
     public <K> KeyedStream<T, K> keyBy(KeySelector<T, K> key) {
         Preconditions.checkNotNull(key);
+        // TODO: 将上一个DataStream的env、新构建的Transformation、分区器、key类型都存放到成员变量
         return new KeyedStream<>(this, clean(key));
     }
 

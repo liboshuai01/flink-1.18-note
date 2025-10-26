@@ -29,6 +29,8 @@ public class WordCount {
         // TODO: .flatMap() 这一步和上一步`.map()`所作的事情是如出一辙的，最后得到一个新的DataStream对象
         // TODO: DataStream中的env的transformations集合现在有了两个元素了，一个是上面map得到Transformation，一个是现在flatMap得到的transformation
         SingleOutputStreamOperator<Tuple2<String, Integer>> flatMapDataStream = mapDataStream.flatMap(new Splitter());
+        // TODO: 还是新创建了一个类型为KeyedStream的DataStream，DataStream里面持有上一个DataStream的env、新构建的Transformation（类型为PartitionTransformation)、用户传入的分区器、key类型
+        // TODO: 需要注意PartitionTransformation并没有具体的算子Operator，而是包含了用户传入的分区器、数据交互模式，它不代表具体计算任务Operator，还是两个计算任务直接连接的属性
         KeyedStream<Tuple2<String, Integer>, String> keyedDataStream = flatMapDataStream.keyBy(value -> value.f0);
         WindowedStream<Tuple2<String, Integer>, String, TimeWindow> windowDataStream = keyedDataStream.window(
                 TumblingProcessingTimeWindows.of(Time.seconds(5)));
