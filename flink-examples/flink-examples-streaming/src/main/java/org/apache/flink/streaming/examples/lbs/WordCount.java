@@ -32,7 +32,9 @@ public class WordCount {
         // TODO: 还是新创建了一个类型为KeyedStream的DataStream，DataStream里面持有上一个DataStream的env、新构建的Transformation（类型为PartitionTransformation)、用户传入的分区器、key类型
         // TODO: 需要注意PartitionTransformation并没有具体的算子Operator，而是包含了用户传入的分区器、数据交互模式，它不代表具体计算任务Operator，还是两个计算任务直接连接的属性
         KeyedStream<Tuple2<String, Integer>, String> keyedDataStream = flatMapDataStream.keyBy(value -> value.f0);
-        // TODO:
+        // TODO: 这一步和最开始的.socketTextStream()的内部流程步骤很类似，都是无需用户自己编写function，而是flink自己根据传入的参数构建内置function
+        // TODO: 其他步骤，例如创建新的transformation并持有上一个transformation，将新的transformation加入到env中的集合中，最后使用env、新transformation创建新的DataStream都是一样的
+        // TODO: 唯一有区别的地方在于，这里创建的transformation类型为ReduceTransformation，里面不持有OperatorFactory，而是直接持有function。还有就是额外要多持有分区器相关的对象
         SingleOutputStreamOperator<Tuple2<String, Integer>> sumDataStream = keyedDataStream.sum(1);
         DataStreamSink<Tuple2<String, Integer>> dataStreamSink = sumDataStream.print();
 
