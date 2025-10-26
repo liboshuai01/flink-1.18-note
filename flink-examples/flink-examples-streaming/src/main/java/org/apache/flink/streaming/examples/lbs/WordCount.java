@@ -16,7 +16,7 @@ import org.apache.flink.util.Collector;
 public class WordCount {
     public static void main(String[] args) throws Exception {
         // TODO: Idea中启动会创建一个LocalStreamEnvironment，然后对LocalStreamEnvironment进行一些项目运行所需配置的初始化工作。
-        // TODO: 此时env中只有这些简单的配置信息: 并行度为cpu核心数、部署目标为local、提交作业的方式为附加模式等
+        // TODO: 此时env中只有 [并行度为cpu核心数、部署目标为local、提交作业的方式为附加模式等] 这些简单的配置信息.
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         // TODO: 通过env创建了DataStream, DatStream持有env、transformation, transformation持有OperatorFactory.
         // TODO: OperatorFactory持有Operator, Operator仅持有SocketTextStreamFunction.
