@@ -98,9 +98,10 @@ public class WindowedStream<T, K, W extends Window> {
                         // TODO: 获取KeyStream中key的类型
                         input.getKeyType());
         // TODO: 到这里`keyedDataStream.window(TumblingProcessingTimeWindows.of(Time.seconds(5)));`这行代码就执行完毕了。
-        // TODO: 我们可以看到关于DataStream还是新创建的一个，但是这次并没有新创建transformation，之前的DataStream也没有抛弃，还是作为input存了起来
-        // TODO: 因为没有创建新的transformation，所以自然的也没有新的OperatorFactory、Operator的必要性了，这里创建了一个WindowOperatorBuilder
-        // TODO: WindowOperatorBuilder窗口算子构造器中持有用户传入的windowAssigner窗口分配器、新创建的ProcessingTimeTrigger类型的触发器对象、分区器、env的config等
+        // TODO: 注意：这里返回的WindowStream并不是DataStream，它只是持有了上一个类型为keyStream的DataStream。
+        // TODO: 同时WindowStream里面并没有创建新的Transformation，也就没有创建新的OperatorFactory、Operator的必要了，取而代替创建的是WindowOperatorBuilder。
+        // TODO: WindowOperatorBuilder里面持有用户传入的窗口分配器、默认窗口触发器、上个流的分区选择器、上个流env的config等信息。
+        // TODO: WindowOperatorBuilder的出现，是为了后面在进行聚合等操作时，来利用它创建真正的WindowOperator。
     }
 
     /** Sets the {@code Trigger} that should be used to trigger window emission. */
