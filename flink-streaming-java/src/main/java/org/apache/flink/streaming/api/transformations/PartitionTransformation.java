@@ -29,6 +29,8 @@ import java.util.List;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
+// TODO: PartitionTransformation中并没有包含实际的OperatorFactory，而OneInputTransformation、TwoInputTransformatio都有
+// TODO: 但是它多出了两个成员变量partitioner（分区器）、exchangeMode（数据交换模式）
 /**
  * This transformation represents a change of partitioning of the input elements.
  *
@@ -40,10 +42,13 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 @Internal
 public class PartitionTransformation<T> extends Transformation<T> {
 
+    // TODO: 前一个DataStream中的transformation
     private final Transformation<T> input;
 
+    // TODO: 数据分发的具体逻辑，上游算子产生的每一条数据记录，应该被发送到下游算子的哪一个并行实例
     private final StreamPartitioner<T> partitioner;
 
+    // TODO: 数据在物理上如何从上游 Task 传输到下游 Task，数据应该立即发送，还是等上游任务处理完一批（或全部）数据后再发送
     private final StreamExchangeMode exchangeMode;
 
     /**
