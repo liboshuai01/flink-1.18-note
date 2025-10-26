@@ -759,6 +759,7 @@ public class KeyedStream<T, KEY> extends DataStream<T> {
     @PublicEvolving
     public <W extends Window> WindowedStream<T, KEY, W> window(
             WindowAssigner<? super T, W> assigner) {
+        // TODO: 传入前一个DataStream对象，和用户编写的窗口分配器
         return new WindowedStream<>(this, assigner);
     }
 

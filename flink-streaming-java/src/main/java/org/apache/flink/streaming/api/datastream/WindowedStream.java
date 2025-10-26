@@ -78,15 +78,24 @@ public class WindowedStream<T, K, W extends Window> {
     @PublicEvolving
     public WindowedStream(KeyedStream<T, K> input, WindowAssigner<? super T, W> windowAssigner) {
 
+        // TODO: 将上一个DataStream作为成员变量存入，也就是上个keyBy后得到的keyStream
         this.input = input;
 
+        // TODO: 将新new出来的窗口算子构造器存入成员变量中
         this.builder =
+                // TODO: 创建一个窗口算子构造器，持有窗口分配器windowsAssigner、keyStream流中env的config配置信息
+                // TODO: 上个keyStream流中transformation的输出结果类型、上个keyStream的分区器keySelector、触发器ProcessingTimeTrigger对象实例
                 new WindowOperatorBuilder<>(
                         windowAssigner,
+                        // TODO: 创建一个ProcessingTimeTrigger类型的触发器对象
                         windowAssigner.getDefaultTrigger(input.getExecutionEnvironment()),
+                        // TODO: 获取KeyStream中env的config
                         input.getExecutionConfig(),
+                        // TODO: 获取KeyStream中transformation的outputType
                         input.getType(),
+                        // TODO: 获取KeyStream中的分区器keySelector
                         input.getKeySelector(),
+                        // TODO: 获取KeyStream中key的类型
                         input.getKeyType());
     }
 
