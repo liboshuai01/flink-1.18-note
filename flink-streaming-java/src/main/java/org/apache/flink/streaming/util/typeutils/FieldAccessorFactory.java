@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: 根据数据类型和字段表达式，创建出具体 FieldAccessor 实例的工厂。
 /** Static factories for the {@link FieldAccessor} utilities. */
 @Internal
 public class FieldAccessorFactory implements Serializable {

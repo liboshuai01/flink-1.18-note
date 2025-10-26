@@ -37,8 +37,8 @@ public class WordCount {
         // TODO: WindowOperatorBuilder里面持有用户传入的窗口分配器、默认窗口触发器、上个流的分区选择器、上个流env的config等信息。
         WindowedStream<Tuple2<String, Integer>, String, TimeWindow> windowDataStream = keyedDataStream.window(
                 TumblingProcessingTimeWindows.of(Time.seconds(5)));
+        // TODO: 这里又通过聚合api将前面的假DataStream流WindowedStream转换回DataStream了，
         SingleOutputStreamOperator<Tuple2<String, Integer>> sumDataStream = windowDataStream.sum(1);
-        // TODO:
         DataStreamSink<Tuple2<String, Integer>> dataStreamSink = sumDataStream.print();
 
         env.execute("word count demo");

@@ -21,6 +21,7 @@ import org.apache.flink.annotation.Internal;
 
 import java.io.Serializable;
 
+// TODO: 通过工厂模式和策略模式，将不同数值类型的求和逻辑封装在各自独立的子类中，并提供一个统一的工厂方法来获取正确的求和实例
 /** Internal function for summing up contents of fields. This is used with {@link SumAggregator}. */
 @Internal
 public abstract class SumFunction implements Serializable {

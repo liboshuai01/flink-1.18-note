@@ -148,10 +148,11 @@ public class WindowOperatorBuilder<T, K, W extends Window> {
                     new InternalIterableWindowFunction<>(
                             new ReduceApplyWindowFunction<>(reduceFunction, function)));
         } else {
+            // TODO: 创建一个用于聚合时保存数据的Flink状态描述器
             ReducingStateDescriptor<T> stateDesc =
                     new ReducingStateDescriptor<>(
                             WINDOW_STATE_NAME, reduceFunction, inputType.createSerializer(config));
-
+            // TODO: 传入聚合状态描述器和再包装了一层的单值透传function，来真正构建windowOperator
             return buildWindowOperator(
                     stateDesc, new InternalSingleValueWindowFunction<>(function));
         }
@@ -266,6 +267,7 @@ public class WindowOperatorBuilder<T, K, W extends Window> {
             StateDescriptor<? extends AppendingState<T, ACC>, ?> stateDesc,
             InternalWindowFunction<ACC, R, K, W> function) {
 
+        // TODO: 调用windowOperator的构造方法，来创建WindowOperator，注意这个WindowOperator是一个真正的Operator
         return new WindowOperator<>(
                 windowAssigner,
                 windowAssigner.getWindowSerializer(config),

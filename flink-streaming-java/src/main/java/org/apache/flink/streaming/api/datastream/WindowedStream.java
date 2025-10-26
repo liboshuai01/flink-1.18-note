@@ -174,14 +174,18 @@ public class WindowedStream<T, K, W extends Window> {
      */
     @SuppressWarnings("unchecked")
     public SingleOutputStreamOperator<T> reduce(ReduceFunction<T> function) {
+        // TODO: reduce方法不支持实际类型为RichFunction的对象
         if (function instanceof RichFunction) {
             throw new UnsupportedOperationException(
                     "ReduceFunction of reduce can not be a RichFunction. "
                             + "Please use reduce(ReduceFunction, WindowFunction) instead.");
         }
 
+        // FIXME: 暂时忽略
         // clean the closure
         function = input.getExecutionEnvironment().clean(function);
+        // TODO: 此处调用了 `reduce(ReduceFunction, WindowFunction)` 的重载版本。`ReduceFunction` 负责增量聚合，最终只产生一个结果。
+        // TODO: `PassThroughWindowFunction` 则负责将这个唯一的聚合结果直接“透传”给下游，不做任何额外处理。
         return reduce(function, new PassThroughWindowFunction<>());
     }
 
@@ -199,7 +203,9 @@ public class WindowedStream<T, K, W extends Window> {
     public <R> SingleOutputStreamOperator<R> reduce(
             ReduceFunction<T> reduceFunction, WindowFunction<T, R, K, W> function) {
 
+        // TODO: 获取上一个KeyStream流的输出结果类型
         TypeInformation<T> inType = input.getType();
+        // TODO: 通过一个KeyStream流的输出结果类型和包含具体聚合逻辑function，来获取聚合之后windowStream应该输出的结果类型
         TypeInformation<R> resultType = getWindowFunctionReturnType(function, inType);
         return reduce(reduceFunction, function, resultType);
     }
@@ -228,6 +234,7 @@ public class WindowedStream<T, K, W extends Window> {
         final String opName = builder.generateOperatorName();
         final String opDescription = builder.generateOperatorDescription(reduceFunction, function);
 
+        // TODO: 传入两个聚合function，通过之前的windowOperatorBuilder来创建一个WindowOperator
         OneInputStreamOperator<T, R> operator = builder.reduce(reduceFunction, function);
         return input.transform(opName, resultType, operator).setDescription(opDescription);
     }
@@ -693,7 +700,10 @@ public class WindowedStream<T, K, W extends Window> {
      */
     public SingleOutputStreamOperator<T> sum(int positionToSum) {
         return aggregate(
-                new SumAggregator<>(positionToSum, input.getType(), input.getExecutionConfig()));
+                // TODO: 此对象中持有具体执行的sumFunction函数（根据上一个流的outputType和用户传入的positionToSum得来得）
+                // TODO: 也就是说这里通过前一个流得输出结果类型和用户传入得参数，帮普通用户创建了一个内置得Function函数，不需要用户自己编写了。
+                new SumAggregator<>(positionToSum, input.getType(), input.getExecutionConfig())
+        );
     }
 
     /**

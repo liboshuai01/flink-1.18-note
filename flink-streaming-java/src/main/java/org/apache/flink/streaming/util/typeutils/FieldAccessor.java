@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
+// TODO: 屏蔽类型差异，是具体执行字段读写操作的统一访问器
 /**
  * These classes encapsulate the logic of accessing a field specified by the user as either an index
  * or a field expression string. TypeInformation can also be requested for the field. The position
