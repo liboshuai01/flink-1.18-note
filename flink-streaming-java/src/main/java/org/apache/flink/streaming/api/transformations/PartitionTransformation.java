@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
+// TODO: PartitionTransformation 本身不代表一个计算任务（即一个算子），而是定义了两个计算任务（Transformation 节点）之间数据连接（边，Edge）的属性
 // TODO: PartitionTransformation中并没有包含实际的OperatorFactory，而OneInputTransformation、TwoInputTransformatio都有
 // TODO: 但是它多出了两个成员变量partitioner（分区器）、exchangeMode（数据交换模式）
 /**
