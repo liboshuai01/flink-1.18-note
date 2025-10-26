@@ -18,9 +18,13 @@ public class WordCount {
         // TODO: Idea中启动会创建一个LocalStreamEnvironment，然后对LocalStreamEnvironment进行一些项目运行所需配置的初始化工作。
         // TODO: 此时env中只有 [并行度为cpu核心数、部署目标为local、提交作业的方式为附加模式等] 这些简单的配置信息.
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        // TODO: 通过env创建了DataStream, DatStream持有env、transformation, transformation持有OperatorFactory.
+        // TODO: 通过env创建了DataStream, DatStream持有env、transformation（类型为LegacySourceTransformation）, transformation持有OperatorFactory.
         // TODO: OperatorFactory持有Operator, Operator仅持有SocketTextStreamFunction.
         DataStreamSource<String> dataStream = env.socketTextStream("localhost", 7777);
+        // TODO: 通过source源的DataStream创建了一个的DataStream对象，这个全新的DataStream对象同样持有env、transformation
+        // TODO: 但这次的transformation（类型为OneInputTransformation）也是新创建的，并且里面的input成员变量存放这上一个DataStream中的transformation
+        // TODO: 另外还将这个新的transformation存放到了env中的transformations这个list中，以便后续生成StreamGraph图遍历使用
+        // TODO: 同样这个新的transformation中也持有一个OperatorFactory, OperatorFactory又持有Operator, Operator仅持有用户传入的MapFunction
         SingleOutputStreamOperator<String> mapDataStream = dataStream.map(String::toLowerCase);
         SingleOutputStreamOperator<Tuple2<String, Integer>> flatMapDataStream = mapDataStream.flatMap(new Splitter());
         KeyedStream<Tuple2<String, Integer>, String> keyedDataStream = flatMapDataStream.keyBy(value -> value.f0);
