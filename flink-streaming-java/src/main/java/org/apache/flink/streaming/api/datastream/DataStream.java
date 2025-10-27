@@ -942,6 +942,7 @@ public class DataStream<T> {
      */
     @PublicEvolving
     public DataStreamSink<T> print() {
+        // TODO: 和`.socketTextStream()`类似，也是创建一个Flink内置的Function
         PrintSinkFunction<T> printFunction = new PrintSinkFunction<>();
         return addSink(printFunction).name("Print to Std. Out");
     }
@@ -1271,6 +1272,7 @@ public class DataStream<T> {
             ((InputTypeConfigurable) sinkFunction).setInputType(getType(), getExecutionConfig());
         }
 
+        // TODO: 将上一个DataStream、外面的function传入，来创建DataStreamSink（注意：DataStreamSink并不是DataStream）
         return DataStreamSink.forSinkFunction(this, clean(sinkFunction));
     }
 

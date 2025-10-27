@@ -52,9 +52,13 @@ public class DataStreamSink<T> {
 
     static <T> DataStreamSink<T> forSinkFunction(
             DataStream<T> inputStream, SinkFunction<T> sinkFunction) {
+        // TODO: 创建一个Operator，持有function，并设置算子链策略为总是合并
         StreamSink<T> sinkOperator = new StreamSink<>(sinkFunction);
+        // TODO: 获取上个DataStream中持有的env
         final StreamExecutionEnvironment executionEnvironment =
                 inputStream.getExecutionEnvironment();
+        // TODO: new了一个新的transformation，里面持有上一个DataStream的transformation
+        // TODO: 还将传入的Operator包装为OperatorFactory进行持有，并初始化设置了自己transformation的id、name、输出结果类型、槽位共享组等等信息
         PhysicalTransformation<T> transformation =
                 new LegacySinkTransformation<>(
                         inputStream.getTransformation(),
@@ -62,8 +66,17 @@ public class DataStreamSink<T> {
                         sinkOperator,
                         executionEnvironment.getParallelism(),
                         false);
+        // TODO: 将新new出来的transformation存放到env中的集合中，以便后续生成StreamGraph图遍历使用
         executionEnvironment.addOperator(transformation);
+        // TODO: 新new了一个DataStreamSink对象，注意这个DataStreamSink并不是DataStream的子类
+        // TODO: 虽然它内部也持有一个transformation，但是并不持有env。这里也仅仅就transformation存放成员变量中
         return new DataStreamSink<>(transformation);
+        // TODO: 到这里`sumDataStream.print();`这行代码也就结束了，我们来总结归纳一下：
+        // TODO: 1. 最终返回的结果类型DataStreamSink不是DataStream，也就是在调用`.print()`后我们就不能继续链式调用例如`.map()`、`.filter()`等算子api了
+        // TODO: 2. 与`.socketTextStream()`类似，这次也不需要用户手动传入function，而是使用的flink内置的PrintSinkFunction
+        // TODO: 3. DataStreamSink中也持有一个新创建的transformation，但是不再持有上一个DataStream流中的env了
+        // TODO: 4. DataStreamSink中的transformation中同样持有上个流的transformation，且同样持有OperatorFactory，OperatorFactory持有Operator，Operator持有function
+        // TODO: 5. 最后还会把transformation加入到env的集合中
     }
 
     @Internal

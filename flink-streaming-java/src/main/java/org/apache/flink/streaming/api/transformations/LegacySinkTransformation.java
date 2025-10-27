@@ -74,6 +74,7 @@ public class LegacySinkTransformation<T> extends PhysicalTransformation<T> {
             StreamSink<T> operator,
             int parallelism,
             boolean parallelismConfigured) {
+        // TODO: `SimpleOperatorFactory.of(operator)`使用Operator创建一个OperatorFactory
         this(input, name, SimpleOperatorFactory.of(operator), parallelism, parallelismConfigured);
     }
 
@@ -93,8 +94,11 @@ public class LegacySinkTransformation<T> extends PhysicalTransformation<T> {
             StreamOperatorFactory<Object> operatorFactory,
             int parallelism,
             boolean parallelismConfigured) {
+        // TODO: 设置transformation的id、name、输出结果类型、并行度、槽位共享组、并行度是否可在运行时更改
         super(name, input.getOutputType(), parallelism, parallelismConfigured);
+        // TODO: 将上个DataStream流持有的transformation存放input成员变量
         this.input = input;
+        // TODO: 将上一步使用Operator构造的OperatorFactory作为成员变量存入
         this.operatorFactory = operatorFactory;
     }
 

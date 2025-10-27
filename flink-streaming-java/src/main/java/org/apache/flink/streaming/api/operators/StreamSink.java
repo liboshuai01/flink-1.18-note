@@ -37,7 +37,9 @@ public class StreamSink<IN> extends AbstractUdfStreamOperator<Object, SinkFuncti
     private long currentWatermark = Long.MIN_VALUE;
 
     public StreamSink(SinkFunction<IN> sinkFunction) {
+        // TODO: 调用父类构造方法，持有传入的function
         super(sinkFunction);
+        // TODO: 设置算子链策略为尽量总是合并
         chainingStrategy = ChainingStrategy.ALWAYS;
     }
 
