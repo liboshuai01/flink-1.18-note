@@ -32,6 +32,9 @@ public class WordCount {
         // TODO: 其他步骤，例如创建新的transformation并持有上一个transformation，将新的transformation加入到env中的集合中，最后使用env、新transformation创建新的DataStream都是一样的
         // TODO: 唯一有区别的地方在于，这里创建的transformation类型为ReduceTransformation，里面不持有OperatorFactory，而是直接持有function。还有就是额外要多持有分区器相关的对象
         SingleOutputStreamOperator<Tuple2<String, Integer>> sumDataStream = keyedDataStream.sum(1);
+        // TODO: 和`.socketTextStream()`流程类似，只不过返回的对象不是DataStream了，而是DataStreamSink
+        // TODO: DataStreamSink也持有transformation，但是不再持有env。DataStreamSink中没有`.map()`、`.filter()`等方法，无法再链式调用算子api了。
+        // TODO: 这里持有的transformation也是新创建的，同样持有上一个transformation，最后也会被新创建的transformation存放到env的集合中
         DataStreamSink<Tuple2<String, Integer>> dataStreamSink = sumDataStream.print();
 
         env.execute("word count demo");
