@@ -183,12 +183,14 @@ public class StreamGraphGenerator {
 
     private boolean shouldExecuteInBatchMode;
 
+    // TODO: key为transformation的class对象，value为对应的transformation翻译为StreamGraph的翻译器对象
     @SuppressWarnings("rawtypes")
     private static final Map<
                     Class<? extends Transformation>,
                     TransformationTranslator<?, ? extends Transformation>>
             translatorMap;
 
+    // TODO: 这里将每个不同类型的Transformation对应的翻译器对象提前存放好，方便后续使用
     static {
         @SuppressWarnings("rawtypes")
         Map<Class<? extends Transformation>, TransformationTranslator<?, ? extends Transformation>>
@@ -322,11 +324,13 @@ public class StreamGraphGenerator {
         streamGraph = new StreamGraph(executionConfig, checkpointConfig, savepointRestoreSettings);
         // TODO: 获取是否应该使用批处理模式执行
         shouldExecuteInBatchMode = shouldExecuteInBatchMode();
-        // TODO: 将生成器中的配置信息，都配置到StreamGraph对象中
+        // TODO: 将生成器中的配置信息，都配置到StreamGraph对象中，并设置到底是批处理还是流处理
         configureStreamGraph(streamGraph);
 
+        // TODO: 记录已经访问过的transformation
         alreadyTransformed = new IdentityHashMap<>();
 
+        // TODO: 这里将所有的transformation转为了StreamNode, StreamNode中又包含StreamEdge（分为InEdges和outEdges）
         for (Transformation<?> transformation : transformations) {
             transform(transformation);
         }
@@ -336,6 +340,7 @@ public class StreamGraphGenerator {
         setFineGrainedGlobalStreamExchangeMode(streamGraph);
 
         for (StreamNode node : streamGraph.getStreamNodes()) {
+            // TODO: 如何当前StreamNode的InEdges中任意一个StreamEdge是需要关闭未对齐检查点的，则将所有的StreamEdge都设置关闭对其检查点
             if (node.getInEdges().stream().anyMatch(this::shouldDisableUnalignedCheckpointing)) {
                 for (StreamEdge edge : node.getInEdges()) {
                     edge.setSupportsUnalignedCheckpoints(false);
@@ -371,6 +376,7 @@ public class StreamGraphGenerator {
     private void configureStreamGraph(final StreamGraph graph) {
         checkNotNull(graph);
 
+        // TODO: 将生成器的中配置信息设置到StreamGraph中
         graph.setChaining(chaining);
         graph.setChainingOfOperatorsWithDifferentMaxParallelism(
                 chainingOfOperatorsWithDifferentMaxParallelism);
@@ -386,10 +392,13 @@ public class StreamGraphGenerator {
                         ExecutionCheckpointingOptions.ENABLE_CHECKPOINTS_AFTER_TASKS_FINISH));
         setDynamic(graph);
 
+        // TODO: 分别根据批、流模式进行不同的设置
         if (shouldExecuteInBatchMode) {
+            // TODO: 设置为批模式、设置作业名称、关闭checkpoint、设置状态后端等
             configureStreamGraphBatch(graph);
             setDefaultBufferTimeout(-1);
         } else {
+            // TODO: 设置为流模式、设置作业名称、checkpoint、savepoint、状态后端、全局作业交换模式等
             configureStreamGraphStreaming(graph);
         }
     }
@@ -537,6 +546,7 @@ public class StreamGraphGenerator {
      * delegates to one of the transformation specific methods.
      */
     private Collection<Integer> transform(Transformation<?> transform) {
+        // TODO: 如何已经转换过了，则直接从map中获取，防止重复转换
         if (alreadyTransformed.containsKey(transform)) {
             return alreadyTransformed.get(transform);
         }
@@ -545,6 +555,7 @@ public class StreamGraphGenerator {
 
         if (transform.getMaxParallelism() <= 0) {
 
+            // TODO: 如果尚未设置最大并行度，那么首先使用 ExecutionConfig 中作业范围的最大并行度。
             // if the max parallelism hasn't been set, then first use the job wide max parallelism
             // from the ExecutionConfig.
             int globalMaxParallelismFromConfig = executionConfig.getMaxParallelism();
@@ -553,6 +564,7 @@ public class StreamGraphGenerator {
             }
         }
 
+        // TODO: 解析并注册槽共享组的资源配置，同时校验确保同名组的配置全局一致。
         transform
                 .getSlotSharingGroup()
                 .ifPresent(
@@ -583,6 +595,7 @@ public class StreamGraphGenerator {
         // call at least once to trigger exceptions about MissingTypeInfo
         transform.getOutputType();
 
+        // TODO: 根据transformation获取不同的翻译器
         @SuppressWarnings("unchecked")
         final TransformationTranslator<?, Transformation<?>> translator =
                 (TransformationTranslator<?, Transformation<?>>)
@@ -590,6 +603,7 @@ public class StreamGraphGenerator {
 
         Collection<Integer> transformedIds;
         if (translator != null) {
+            // TODO:
             transformedIds = translate(translator, transform);
         } else {
             transformedIds = legacyTransform(transform);
@@ -839,6 +853,7 @@ public class StreamGraphGenerator {
         checkNotNull(translator);
         checkNotNull(transform);
 
+        // TODO: 递归查找当前transformation的所有上一个transformation
         final List<Collection<Integer>> allInputIds = getParentInputIds(transform.getInputs());
 
         // the recursive call might have already transformed this

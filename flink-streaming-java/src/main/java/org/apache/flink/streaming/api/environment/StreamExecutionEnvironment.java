@@ -2160,12 +2160,17 @@ public class StreamExecutionEnvironment implements AutoCloseable {
         // TODO: getStreamGraph()可能会修改transformations，而后面还需要用到原始的transformations，就对transformation们存一个档
         final List<Transformation<?>> originalTransformations = new ArrayList<>(transformations);
         // TODO: 通过transformations生成streamGraph【重点】
+        // TODO: StreamGraph包含：
+        // TODO: 1. 作业名称、执行/checkpoint/savepoint等配置信息
+        // TODO: 2. 多个StreamNodes: id、并行度、算子名称/算子工厂、输入边StreamEdge、输出边StreamEdge
+        // TODO: 3. 一个StreamNode又包含一个输入边StreamEdge，一个输出边StreamEdge. StreamEdge： sourceId、sourceOperatorName、targetOperatorName
         StreamGraph streamGraph = getStreamGraph();
         if (jobName != null) {
             streamGraph.setJobName(jobName);
         }
 
         try {
+            // TODO: 传入 streamGraph 图进行执行
             return execute(streamGraph);
         } catch (Throwable t) {
             Optional<ClusterDatasetCorruptedException> clusterDatasetCorruptedException =
@@ -2340,6 +2345,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      */
     @Internal
     public StreamGraph getStreamGraph() {
+        // TODO: 获取StreamGraph图
         return getStreamGraph(true);
     }
 
@@ -2355,6 +2361,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      */
     @Internal
     public StreamGraph getStreamGraph(boolean clearTransformations) {
+        // TODO: 通过transformations生成StreamGraph
         final StreamGraph streamGraph = getStreamGraph(transformations);
         if (clearTransformations) {
             transformations.clear();
