@@ -37,6 +37,10 @@ public class WordCount {
         // TODO: 这里持有的transformation也是新创建的，同样持有上一个transformation，最后也会被新创建的transformation存放到env的集合中
         DataStreamSink<Tuple2<String, Integer>> dataStreamSink = sumDataStream.print();
 
+        // TODO: 上面的所有步骤总结下来就做了两件事情：
+        // TODO: 1. 创建了env，并初始化配置了一些任务参数，例如：并行度为cpu核心数、部署目标为local、提交作业的方式为附加模式等
+        // TODO: 2. 每个算子api对应创建一个transformation，这些transformation都保存到了env的transformations成员变量中
+
         env.execute("word count demo");
     }
 

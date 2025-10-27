@@ -2157,7 +2157,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      * @throws Exception which occurs during job execution.
      */
     public JobExecutionResult execute(String jobName) throws Exception {
+        // TODO: getStreamGraph()可能会修改transformations，而后面还需要用到原始的transformations，就对transformation们存一个档
         final List<Transformation<?>> originalTransformations = new ArrayList<>(transformations);
+        // TODO: 通过transformations生成streamGraph【重点】
         StreamGraph streamGraph = getStreamGraph();
         if (jobName != null) {
             streamGraph.setJobName(jobName);
@@ -2361,8 +2363,13 @@ public class StreamExecutionEnvironment implements AutoCloseable {
     }
 
     private StreamGraph getStreamGraph(List<Transformation<?>> transformations) {
+        // TODO: [为 Flink SQL 等交互式场景提速] 核心作用：执行前先问集群“上一步的查询结果还在吗？”，若在就直接复用，实现秒级响应。
         synchronizeClusterDatasetStatus();
-        return getStreamGraphGenerator(transformations).generate();
+        return
+                // TODO: 通过transformations和各种配置信息创建了一个StreamGraph生成器
+                getStreamGraphGenerator(transformations)
+                        // TODO: 使用StreamGraph生成器，生成StreamGraph图【重点】
+                .generate();
     }
 
     private void synchronizeClusterDatasetStatus() {
@@ -2395,24 +2402,36 @@ public class StreamExecutionEnvironment implements AutoCloseable {
     }
 
     private StreamGraphGenerator getStreamGraphGenerator(List<Transformation<?>> transformations) {
+        // TODO: transformation数量不能小于0，不然转化啥啊
         if (transformations.size() <= 0) {
             throw new IllegalStateException(
                     "No operators defined in streaming topology. Cannot execute.");
         }
 
+        // TODO: 防止在 StreamGraph 生成期间，外部代码修改原始的 transformations 列表，从而导致并发修改等问题。
         // We copy the transformation so that newly added transformations cannot intervene with the
         // stream graph generation.
-        return new StreamGraphGenerator(
-                new ArrayList<>(transformations), config, checkpointCfg, configuration)
+        return
+                // TODO: 传入transformations和[提交目标、提交方式、checkpoint、savepoint、并行度]等配置信息来创建StreamGraph图生成器
+                new StreamGraphGenerator(new ArrayList<>(transformations), config, checkpointCfg, configuration)
+                // TODO: 设置默认状态后端配置
                 .setStateBackend(defaultStateBackend)
+                        // TODO: 设置是否启用 Changelog State Backend。这是一个可以显著缩短 Checkpoint 周期的优化功能。
                 .setChangelogStateBackendEnabled(changelogStateBackendEnabled)
+                        // TODO: 设置默认保存点目录配置
                 .setSavepointDir(defaultSavepointDirectory)
+                        // TODO: 设置是否启用算子链合并
                 .setChaining(isChainingEnabled)
+                        // TODO: 设置一个更细粒度的算子链策略，决定是否允许具有不同最大并行度（max parallelism）的算子进行链接。
                 .setChainingOfOperatorsWithDifferentMaxParallelism(
                         isChainingOfOperatorsWithDifferentMaxParallelismEnabled)
+                        // TODO: 设置用户定义的需要通过分布式缓存（Distributed Cache）分发的文件或目录。这些文件将被分发到所有 TaskManager 节点。
                 .setUserArtifacts(cacheFile)
+                        // TODO: 设置时间语义是处理时间，还是事件时间
                 .setTimeCharacteristic(timeCharacteristic)
+                        // TODO: 设置默认的网络缓冲区超时时间
                 .setDefaultBufferTimeout(bufferTimeout)
+                        // TODO： 设置为槽共享组（Slot Sharing Group）定义的资源配置
                 .setSlotSharingGroupResource(slotSharingGroupResources);
     }
 

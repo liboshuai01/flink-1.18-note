@@ -318,8 +318,11 @@ public class StreamGraphGenerator {
     }
 
     public StreamGraph generate() {
+        // TODO: 创建执行、checkpoint、savepoint配置信息，来创建一个StreamGraph对象
         streamGraph = new StreamGraph(executionConfig, checkpointConfig, savepointRestoreSettings);
+        // TODO: 获取是否应该使用批处理模式执行
         shouldExecuteInBatchMode = shouldExecuteInBatchMode();
+        // TODO: 将生成器中的配置信息，都配置到StreamGraph对象中
         configureStreamGraph(streamGraph);
 
         alreadyTransformed = new IdentityHashMap<>();

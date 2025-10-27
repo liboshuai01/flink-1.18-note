@@ -98,60 +98,152 @@ public class StreamGraph implements Pipeline {
 
     private String jobName;
 
+    /**
+     * 作业范围的执行配置，例如全局并行度、重启策略等。
+     */
     private final ExecutionConfig executionConfig;
+    /**
+     * 检查点相关的配置，例如检查点间隔、模式、超时等。
+     */
     private final CheckpointConfig checkpointConfig;
+    /**
+     * 从 Savepoint 恢复作业的设置。
+     */
     private SavepointRestoreSettings savepointRestoreSettings = SavepointRestoreSettings.none();
 
+    /**
+     * 是否启用算子链（Operator Chaining）。
+     */
     private boolean chaining;
+    /**
+     * 是否允许具有不同最大并行度的算子进行链式连接。
+     */
     private boolean chainingOfOperatorsWithDifferentMaxParallelism;
 
+    /**
+     * 用户定义的、需要通过分布式缓存分发的文件。
+     */
     private Collection<Tuple2<String, DistributedCache.DistributedCacheEntry>> userArtifacts =
             Collections.emptyList();
 
+    /**
+     * 流处理的时间特性（例如，事件时间、处理时间）。
+     */
     private TimeCharacteristic timeCharacteristic;
 
+    /**
+     * 全局的数据交换模式（例如 BATCH, PIPELINED）。
+     */
     private GlobalStreamExchangeMode globalExchangeMode;
 
+    /**
+     * 是否在任务结束后启用检查点。
+     */
     private boolean enableCheckpointsAfterTasksFinish;
 
+    /**
+     * 标记是否默认将所有顶点放入同一个 Slot 共享组。
+     */
     /** Flag to indicate whether to put all vertices into the same slot sharing group by default. */
     private boolean allVerticesInSameSlotSharingGroupByDefault = true;
 
+    /**
+     * 存储图中所有流节点（StreamNode）的 Map，键是节点的 ID。这是图的核心结构。
+     */
     private Map<Integer, StreamNode> streamNodes;
+    /**
+     * 存储所有源节点（Source Node）ID 的集合。
+     */
     private Set<Integer> sources;
+    /**
+     * 存储所有汇节点（Sink Node）ID 的集合。
+     */
     private Set<Integer> sinks;
+    /**
+     * 用于处理侧输出流（Side Output）的虚拟节点。键是虚拟节点ID，值是（原始节点ID, 侧输出标签）。
+     */
     private Map<Integer, Tuple2<Integer, OutputTag>> virtualSideOutputNodes;
+    /**
+     * 用于处理自定义分区的虚拟节点。键是虚拟节点ID，值是（原始节点ID, 分区器, 数据交换模式）。
+     */
     private Map<Integer, Tuple3<Integer, StreamPartitioner<?>, StreamExchangeMode>>
             virtualPartitionNodes;
 
+    /**
+     * 迭代作业中，顶点ID到代理ID（Broker ID）的映射。
+     */
     protected Map<Integer, String> vertexIDtoBrokerID;
+    /**
+     * 迭代作业中，顶点ID到循环超时时间的映射。
+     */
     protected Map<Integer, Long> vertexIDtoLoopTimeout;
+    /**
+     * 作业使用的状态后端（StateBackend），例如 RocksDBStateBackend。
+     */
     private StateBackend stateBackend;
+    /**
+     * 是否启用 Changelog 状态后端。这是一个三态布尔值（是、否、未定义）。
+     */
     private TernaryBoolean changelogStateBackendEnabled;
+    /**
+     * 检查点数据的存储位置，例如 HDFS 路径。
+     */
     private CheckpointStorage checkpointStorage;
+    /**
+     * Savepoint 的存储目录。
+     */
     private Path savepointDir;
+    /**
+     * 存储迭代作业中所有（头节点, 尾节点）对的集合。
+     */
     private Set<Tuple2<StreamNode, StreamNode>> iterationSourceSinkPairs;
+    /**
+     * 时间服务提供者，用于创建定时器服务。
+     */
     private InternalTimeServiceManager.Provider timerServiceProvider;
+    /**
+     * 作业类型，默认为 STREAMING。
+     */
     private JobType jobType = JobType.STREAMING;
+    /**
+     * Slot 共享组的资源配置。
+     */
     private Map<String, ResourceProfile> slotSharingGroupResources;
+    /**
+     * 在UI/Plan中展示顶点描述的模式。
+     */
     private PipelineOptions.VertexDescriptionMode descriptionMode =
             PipelineOptions.VertexDescriptionMode.TREE;
+    /**
+     * 顶点名称是否包含索引前缀。
+     */
     private boolean vertexNameIncludeIndexPrefix = false;
 
+    /**
+     * 在作业状态改变时触发的回调钩子列表。
+     */
     private final List<JobStatusHook> jobStatusHooks = new ArrayList<>();
 
+    /**
+     * 标记图是否是为动态/自适应作业构建的。
+     */
     private boolean dynamic;
 
+    /**
+     * 是否启用了自动并行度推断。
+     */
     private boolean autoParallelismEnabled;
 
     public StreamGraph(
             ExecutionConfig executionConfig,
             CheckpointConfig checkpointConfig,
             SavepointRestoreSettings savepointRestoreSettings) {
+        // TODO: 将传入的配置信息，保存到成员变量中
         this.executionConfig = checkNotNull(executionConfig);
         this.checkpointConfig = checkNotNull(checkpointConfig);
         this.savepointRestoreSettings = checkNotNull(savepointRestoreSettings);
 
+        // TODO: 将之前的一些成员变量都置空，例如：streamNodes、sources、sink等
         // create an empty new stream graph.
         clear();
     }
