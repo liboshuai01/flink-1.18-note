@@ -487,10 +487,12 @@ public class StreamGraph implements Pipeline {
             TypeInformation<IN> inTypeInfo,
             TypeInformation<OUT> outTypeInfo,
             String operatorName) {
+        // TODO: 【重点】根据OperatorFactory是不是source，来选择不同的StreamTask类，后面会采用这个class类运行算子
         Class<? extends TaskInvokable> invokableClass =
                 operatorFactory.isStreamSource()
                         ? SourceStreamTask.class
                         : OneInputStreamTask.class;
+        // TODO: 继续进入
         addOperator(
                 vertexID,
                 slotSharingGroup,
@@ -511,7 +513,7 @@ public class StreamGraph implements Pipeline {
             TypeInformation<OUT> outTypeInfo,
             String operatorName,
             Class<? extends TaskInvokable> invokableClass) {
-
+        // TODO: 继续进入
         addNode(
                 vertexID,
                 slotSharingGroup,
@@ -615,7 +617,7 @@ public class StreamGraph implements Pipeline {
         if (streamNodes.containsKey(vertexID)) {
             throw new RuntimeException("Duplicate vertexID " + vertexID);
         }
-
+        // TODO: 继续进入，最终创建了一个StreamNode对象，也就是持有了一些Operator名称、Operator工厂、最后Operator运行时的调用class等
         StreamNode vertex =
                 new StreamNode(
                         vertexID,

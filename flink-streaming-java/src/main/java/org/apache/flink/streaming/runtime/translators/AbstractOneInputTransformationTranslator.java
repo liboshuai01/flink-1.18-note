@@ -56,11 +56,13 @@ abstract class AbstractOneInputTransformationTranslator<IN, OUT, OP extends Tran
         checkNotNull(inputType);
         checkNotNull(context);
 
+        // TODO: 获取之前传入的对象信息
         final StreamGraph streamGraph = context.getStreamGraph();
         final String slotSharingGroup = context.getSlotSharingGroup();
         final int transformationId = transformation.getId();
         final ExecutionConfig executionConfig = streamGraph.getExecutionConfig();
 
+        // TODO: 这里真正创建了StreamNode
         streamGraph.addOperator(
                 transformationId,
                 slotSharingGroup,
@@ -89,6 +91,7 @@ abstract class AbstractOneInputTransformationTranslator<IN, OUT, OP extends Tran
                 "Expected exactly one input transformation but found "
                         + parentTransformations.size());
 
+        // TODO: 为StreamNode添加StreamEdge
         for (Integer inputId : context.getStreamNodeIds(parentTransformations.get(0))) {
             streamGraph.addEdge(inputId, transformationId, 0);
         }

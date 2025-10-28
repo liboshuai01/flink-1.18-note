@@ -330,8 +330,10 @@ public class StreamGraphGenerator {
         // TODO: 记录已经访问过的transformation
         alreadyTransformed = new IdentityHashMap<>();
 
-        // TODO: 这里将所有的transformation转为了StreamNode, StreamNode中又包含StreamEdge（分为InEdges和outEdges）
+        // TODO: 【重点】这里将所有的transformation转为了StreamNode, StreamNode中又包含StreamEdge（分为InEdges和outEdges）
+        // TODO: 这里是循环递归调用
         for (Transformation<?> transformation : transformations) {
+            // TODO:
             transform(transformation);
         }
 
@@ -547,6 +549,8 @@ public class StreamGraphGenerator {
      */
     private Collection<Integer> transform(Transformation<?> transform) {
         // TODO: 如何已经转换过了，则直接从map中获取，防止重复转换
+        // TODO: 这里也是递归调用的一个结束条件，如果上一个transformation已经被转换过了，
+        // TODO: 则就不需要继续递归调用了，而是直接从map中获取
         if (alreadyTransformed.containsKey(transform)) {
             return alreadyTransformed.get(transform);
         }
@@ -603,7 +607,7 @@ public class StreamGraphGenerator {
 
         Collection<Integer> transformedIds;
         if (translator != null) {
-            // TODO:
+            // TODO: 这里会不断递归将自己的上一个transformation转为StreamNode
             transformedIds = translate(translator, transform);
         } else {
             transformedIds = legacyTransform(transform);
@@ -853,7 +857,7 @@ public class StreamGraphGenerator {
         checkNotNull(translator);
         checkNotNull(transform);
 
-        // TODO: 递归查找当前transformation的所有上一个transformation
+        // TODO: 递归查找当前transformation的上一个transformation，如果存在了则直接返回，如果不存在，则进行转换
         final List<Collection<Integer>> allInputIds = getParentInputIds(transform.getInputs());
 
         // the recursive call might have already transformed this
@@ -870,11 +874,14 @@ public class StreamGraphGenerator {
                                 .flatMap(Collection::stream)
                                 .collect(Collectors.toList()));
 
+        // TODO: 将 streamGraphGenerator、streamGraph等对象都存放到Context中，方便后续获取使用
         final TransformationTranslator.Context context =
                 new ContextImpl(this, streamGraph, slotSharingGroup, configuration);
 
+        // TODO: 重点是这里
         return shouldExecuteInBatchMode
                 ? translator.translateForBatch(transform, context)
+                // TODO: 进行流转换
                 : translator.translateForStreaming(transform, context);
     }
 
