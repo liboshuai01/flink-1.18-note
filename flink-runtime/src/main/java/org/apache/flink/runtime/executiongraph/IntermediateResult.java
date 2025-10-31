@@ -43,14 +43,21 @@ import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
+// TODO: ExecutionGraph中的一个IntermediateResult就对应JobGraph中的一个IntermediateDataSet
+// TODO: 注意是一一对应，即IntermediateResult是没有被并行化的。
+// TODO: IntermediateDataSet用于在JobVertex之间传递中间结果数据，而IntermediateResult则用于在ExecutionJobVertex之间传递中间结果数据
 public class IntermediateResult {
 
+    // TODO: JobGraph图中对于传递JobVertex之间的中间结果数据
     private final IntermediateDataSet intermediateDataSet;
 
     private final IntermediateDataSetID id;
 
+    // TODO: 产生数据的ExecutionJobVertex
     private final ExecutionJobVertex producer;
 
+    // TODO: 一组IntermediateResultPartition对应JobGraph中的一个JobEdge
+    // TODO: 其中一个IntermediateResultPartition就是JobEdge并行化后的其中一个并行度结果
     private final IntermediateResultPartition[] partitions;
 
     /**
@@ -61,6 +68,7 @@ public class IntermediateResult {
     private final HashMap<IntermediateResultPartitionID, Integer> partitionLookupHelper =
             new HashMap<>();
 
+    // TODO: 产生者的并行度，等于IntermediateResultPartition[]的长度
     private final int numParallelProducers;
 
     private int partitionsAssigned;
