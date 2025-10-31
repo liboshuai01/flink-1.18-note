@@ -119,6 +119,7 @@ import java.util.stream.Collectors;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
+// TODO: 一个ExecutionGraph对应一个JobGraph
 /** Default implementation of the {@link ExecutionGraph}. */
 public class DefaultExecutionGraph implements ExecutionGraph, InternalExecutionGraphAccessor {
 
@@ -127,6 +128,7 @@ public class DefaultExecutionGraph implements ExecutionGraph, InternalExecutionG
 
     // --------------------------------------------------------------------------------------------
 
+    // TODO: 执行图id
     /**
      * The unique id of an execution graph. It is different from JobID, because there can be
      * multiple execution graphs created from one job graph, in cases like job re-submission, job
@@ -137,6 +139,7 @@ public class DefaultExecutionGraph implements ExecutionGraph, InternalExecutionG
     /** Job specific information like the job id, job name, job configuration, etc. */
     private final JobInformation jobInformation;
 
+    // TODO: executor都是各种执行器，不是理解的重点
     /** The executor which is used to execute futures. */
     private final ScheduledExecutorService futureExecutor;
 
@@ -152,15 +155,18 @@ public class DefaultExecutionGraph implements ExecutionGraph, InternalExecutionG
     /** {@code true} if all source tasks are stoppable. */
     private boolean isStoppable = true;
 
+    // TODO: JobGraph中的一个JobVertex对应ExecutorGraph中的一个ExecutionJobVertex
     /** All job vertices that are part of this graph. */
     private final Map<JobVertexID, ExecutionJobVertex> tasks;
 
     /** All vertices, in the order in which they were created. * */
     private final List<ExecutionJobVertex> verticesInCreationOrder;
 
+    // TODO: JobGraph中的一个IntermediateDataSet对应ExecutorGraph中的一个IntermediateResult
     /** All intermediate results that are part of this graph. */
     private final Map<IntermediateDataSetID, IntermediateResult> intermediateResults;
 
+    // TODO: ExecutorGraph可以会被多次调用，每次调用的产生的状态信息都对应一个Execution
     /** The currently executed tasks, for callbacks. */
     private final Map<ExecutionAttemptID, Execution> currentExecutions;
 
@@ -245,6 +251,7 @@ public class DefaultExecutionGraph implements ExecutionGraph, InternalExecutionG
 
     private final VertexParallelismStore parallelismStore;
 
+    // TODO: checkpoint相关配置信息
     // ------ Fields that are relevant to the execution and need to be cleared before archiving
     // -------
 
@@ -262,6 +269,7 @@ public class DefaultExecutionGraph implements ExecutionGraph, InternalExecutionG
      */
     private CheckpointStatsTracker checkpointStatsTracker;
 
+    // TODO: 状态后端相关配置信息
     // ------ Fields that are only relevant for archived execution graphs ------------
     @Nullable private String stateBackendName;
 

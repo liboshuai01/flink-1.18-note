@@ -73,6 +73,7 @@ import java.util.stream.Collectors;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
+// TODO: 一个ExecutionJobVertex对应JobGraph中的一个JobVertex
 /**
  * An {@code ExecutionJobVertex} is part of the {@link ExecutionGraph}, and the peer to the {@link
  * JobVertex}.
@@ -92,10 +93,14 @@ public class ExecutionJobVertex
 
     private final JobVertex jobVertex;
 
+    // TODO: JobGraph中的JobVertex会对应ExecutionGraph中的一个ExecutionJobVertex
+    // TODO: 而一个ExecutionJobVertex包含并行度个数量的ExecutionVertex
     @Nullable private ExecutionVertex[] taskVertices;
 
+    // TODO: 产生的输出数据
     @Nullable private IntermediateResult[] producedDataSets;
 
+    // TODO: 接收到的输入数据
     @Nullable private List<IntermediateResult> inputs;
 
     private final VertexParallelismInformation parallelismInfo;
@@ -104,6 +109,7 @@ public class ExecutionJobVertex
 
     @Nullable private final CoLocationGroup coLocationGroup;
 
+    // TODO: 兼容老的source架构
     @Nullable private InputSplit[] inputSplits;
 
     private final ResourceProfile resourceProfile;

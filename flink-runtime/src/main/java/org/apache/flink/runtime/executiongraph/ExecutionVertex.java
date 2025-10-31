@@ -53,6 +53,7 @@ import static org.apache.flink.runtime.execution.ExecutionState.FINISHED;
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkState;
 
+// TODO: 一个JobGraph中的JobVertex对应ExecutionGraph中并行度数量的ExecutionVertex
 /**
  * The ExecutionVertex is a parallel subtask of the execution. It may be executed once, or several
  * times, each of which time it spawns an {@link Execution}.
@@ -64,10 +65,13 @@ public class ExecutionVertex
 
     // --------------------------------------------------------------------------------------------
 
+    // TODO: 持有ExecutionJobVertex，而ExecutionJobVertex包含多个ExecutionVertex
     final ExecutionJobVertex jobVertex;
 
+    // TODO: 输出分区
     private final Map<IntermediateResultPartitionID, IntermediateResultPartition> resultPartitions;
 
+    // TODO: 子任务索引id
     private final int subTaskIndex;
 
     private final ExecutionVertexID executionVertexId;
@@ -82,6 +86,7 @@ public class ExecutionVertex
     /** The current or latest execution attempt of this vertex's task. */
     Execution currentExecution; // this field must never be null
 
+    // TODO: 兼容老source架构
     final ArrayList<InputSplit> inputSplits;
 
     private int nextAttemptNumber;

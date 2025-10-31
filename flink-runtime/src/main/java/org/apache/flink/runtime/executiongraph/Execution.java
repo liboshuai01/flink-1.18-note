@@ -90,6 +90,9 @@ import static org.apache.flink.runtime.execution.ExecutionState.SCHEDULED;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 import static org.apache.flink.util.Preconditions.checkState;
 
+// TODO: ExecutionVertex对应一个并行实例，它可以被多次执行；每次执行就会产生一个Execution，用来记录执行产生的数据信息
+// TODO: 注释中强调了，因为涉及到了并发状态修改，存在并发安全问题；但是为了避免性能问题，不要使用synchronized或Lock等锁，
+// TODO: 而是使用原子类+cas+双重检查进行无锁化解决并发问题
 /**
  * A single execution of a vertex. While an {@link ExecutionVertex} can be executed multiple times
  * (for recovery, re-computation, re-configuration), this class tracks the state of a single
@@ -123,9 +126,11 @@ public class Execution
     /** The executor which is used to execute futures. */
     private final Executor executor;
 
+    // TODO: 这次执行的ExecutionVertex
     /** The execution vertex whose task this execution executes. */
     private final ExecutionVertex vertex;
 
+    // TODO: 标识一次具体执行实例操作的唯一id
     /** The unique ID marking the specific execution instant of the task. */
     private final ExecutionAttemptID attemptId;
 
