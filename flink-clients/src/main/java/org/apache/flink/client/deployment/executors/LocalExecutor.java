@@ -72,13 +72,16 @@ public class LocalExecutor implements PipelineExecutor {
         checkNotNull(pipeline);
         checkNotNull(configuration);
 
+        // TODO: 配置信息追加
         Configuration effectiveConfig = new Configuration();
         effectiveConfig.addAll(this.configuration);
         effectiveConfig.addAll(configuration);
 
+        // TODO: 提交方式execution.attached必须为true
         // we only support attached execution with the local executor.
         checkState(configuration.getBoolean(DeploymentOptions.ATTACHED));
 
+        // TODO: 将StreamGraph转为JobGraph图
         final JobGraph jobGraph = getJobGraph(pipeline, effectiveConfig, userCodeClassloader);
 
         return PerJobMiniClusterFactory.createWithFactory(effectiveConfig, miniClusterFactory)

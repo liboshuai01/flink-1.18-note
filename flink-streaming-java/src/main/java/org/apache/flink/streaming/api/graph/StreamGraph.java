@@ -513,7 +513,7 @@ public class StreamGraph implements Pipeline {
             TypeInformation<OUT> outTypeInfo,
             String operatorName,
             Class<? extends TaskInvokable> invokableClass) {
-        // TODO: 继续进入
+        // TODO: 创建出来了一个StreamNode节点，但是目前StreamNode里面还没有StreamEdge
         addNode(
                 vertexID,
                 slotSharingGroup,

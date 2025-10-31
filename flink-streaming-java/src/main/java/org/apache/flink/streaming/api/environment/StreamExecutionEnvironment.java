@@ -2199,6 +2199,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
      */
     @Internal
     public JobExecutionResult execute(StreamGraph streamGraph) throws Exception {
+        // TODO: 进行异步执行
         final JobClient jobClient = executeAsync(streamGraph);
 
         try {
@@ -2314,6 +2315,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
     @Internal
     public JobClient executeAsync(StreamGraph streamGraph) throws Exception {
         checkNotNull(streamGraph, "StreamGraph cannot be null.");
+        // TODO: 使用SPI+工厂模式获取了一个PipelineExecutor
         final PipelineExecutor executor = getPipelineExecutor();
 
         CompletableFuture<JobClient> jobClientFuture =
@@ -2373,9 +2375,9 @@ public class StreamExecutionEnvironment implements AutoCloseable {
         // TODO: [为 Flink SQL 等交互式场景提速] 核心作用：执行前先问集群“上一步的查询结果还在吗？”，若在就直接复用，实现秒级响应。
         synchronizeClusterDatasetStatus();
         return
-                // TODO: 通过transformations和各种配置信息创建了一个StreamGraph生成器
+                // TODO: 把env中的transformation集合还有各种配置信息，传递给新创建的StreamGraph生成器
                 getStreamGraphGenerator(transformations)
-                        // TODO: 使用StreamGraph生成器，生成StreamGraph图【重点】
+                // TODO: 使用StreamGraph生成器，生成StreamGraph图【重点】
                 .generate();
     }
 
@@ -2876,6 +2878,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
                 configuration.get(DeploymentOptions.TARGET),
                 "No execution.target specified in your configuration file.");
 
+        // TODO: 使用SPI来获取计划图执行器工厂
         final PipelineExecutorFactory executorFactory =
                 executorServiceLoader.getExecutorFactory(configuration);
 
@@ -2884,6 +2887,7 @@ public class StreamExecutionEnvironment implements AutoCloseable {
                 "Cannot find compatible factory for specified execution.target (=%s)",
                 configuration.get(DeploymentOptions.TARGET));
 
+        // TODO: 使用执行器工厂来获取执行器
         return executorFactory.getExecutor(configuration);
     }
 }

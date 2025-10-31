@@ -170,6 +170,7 @@ public class StreamingJobGraphGenerator {
 
     private final Map<Integer, JobVertex> jobVertices;
     private final JobGraph jobGraph;
+    // TODO: 已经被转换为jobVertex的StreamNode Id集合
     private final Collection<Integer> builtVertices;
 
     private final List<StreamEdge> physicalEdgesInOrder;
@@ -233,24 +234,29 @@ public class StreamingJobGraphGenerator {
     }
 
     private JobGraph createJobGraph() {
+        // TODO: 参数效验
         preValidate();
+        // TODO: 配置转移
         jobGraph.setJobType(streamGraph.getJobType());
         jobGraph.setDynamic(streamGraph.isDynamic());
 
         jobGraph.enableApproximateLocalRecovery(
                 streamGraph.getCheckpointConfig().isApproximateLocalRecoveryEnabled());
 
+        // TODO: 根据作业拓扑图生成唯一的hashId
         // Generate deterministic hashes for the nodes in order to identify them across
         // submission iff they didn't change.
         Map<Integer, byte[]> hashes =
                 defaultStreamGraphHasher.traverseStreamGraphAndGenerateHashes(streamGraph);
 
+        // TODO: 根据用户传入的hashId生成
         // Generate legacy version hashes for backwards compatibility
         List<Map<Integer, byte[]>> legacyHashes = new ArrayList<>(legacyStreamGraphHashers.size());
         for (StreamGraphHasher hasher : legacyStreamGraphHashers) {
             legacyHashes.add(hasher.traverseStreamGraphAndGenerateHashes(streamGraph));
         }
 
+        // TODO: 进行算子链合并，将StreamGraph中的StreamNode转为JobVertex，并设置到JobGraph中
         setChaining(hashes, legacyHashes);
 
         if (jobGraph.isDynamic()) {
@@ -262,6 +268,7 @@ public class StreamingJobGraphGenerator {
         // vertices and partition-reuse
         final Map<Integer, Map<StreamEdge, NonChainedOutput>> opIntermediateOutputs =
                 new HashMap<>();
+        // TODO: 创建intermediateDataset和JobEdge，并连接上下游
         setAllOperatorNonChainedOutputsConfigs(opIntermediateOutputs);
         setAllVertexNonChainedOutputsConfigs(opIntermediateOutputs);
 
@@ -641,16 +648,20 @@ public class StreamingJobGraphGenerator {
     private void setChaining(Map<Integer, byte[]> hashes, List<Map<Integer, byte[]>> legacyHashes) {
         // we separate out the sources that run as inputs to another operator (chained inputs)
         // from the sources that needs to run as the main (head) operator.
+        // TODO: key为算子链的源头id，value为算子链信息
         final Map<Integer, OperatorChainInfo> chainEntryPoints =
                 buildChainedInputsAndGetHeadInputs(hashes, legacyHashes);
+        // TODO: 根据源头id进行排序，获取算子链信息集合（算子链信息对象此时还不完整，下面还要进行补充）
         final Collection<OperatorChainInfo> initialEntryPoints =
                 chainEntryPoints.entrySet().stream()
                         .sorted(Comparator.comparing(Map.Entry::getKey))
                         .map(Map.Entry::getValue)
                         .collect(Collectors.toList());
 
+        // TODO: 遍历每个算子链对象，对每个算子链对象进行设置补充，以获取完整的算子链信息
         // iterate over a copy of the values, because this map gets concurrently modified
         for (OperatorChainInfo info : initialEntryPoints) {
+            // TODO: 配置每个算子链的完整信息
             createChain(
                     info.getStartNodeId(),
                     1, // operators start at position 1 because 0 is for chained source inputs
@@ -665,16 +676,24 @@ public class StreamingJobGraphGenerator {
             final OperatorChainInfo chainInfo,
             final Map<Integer, OperatorChainInfo> chainEntryPoints) {
 
+        // TODO: 获取算子链的起始StreamNode的id
         Integer startNodeId = chainInfo.getStartNodeId();
+        // TODO: 判断当前StreamNode是否已经被转换为JobVertex了
         if (!builtVertices.contains(startNodeId)) {
 
+            // TODO: 所有不能被合并到一起的StreamEdge
             List<StreamEdge> transitiveOutEdges = new ArrayList<StreamEdge>();
 
+            // TODO: 可以被合并到一起的StreamEdge
             List<StreamEdge> chainableOutputs = new ArrayList<StreamEdge>();
+            // TODO: 当前不能被合并到一起的StreamEdge
             List<StreamEdge> nonChainableOutputs = new ArrayList<StreamEdge>();
 
+            // TODO: 获取当前遍历的StreamNode
             StreamNode currentNode = streamGraph.getStreamNode(currentNodeId);
 
+            // TODO: 判断这个SteamNode中的StreamEdge是否可以被合并为算子链
+            // TODO: 可以合并的存放到chainableOutputs中，不可以合并的存放到nonChainableOutputs中
             for (StreamEdge outEdge : currentNode.getOutEdges()) {
                 if (isChainable(outEdge, streamGraph)) {
                     chainableOutputs.add(outEdge);
@@ -683,6 +702,7 @@ public class StreamingJobGraphGenerator {
                 }
             }
 
+            // TODO: 遍历当前可合并的边，递归获取不可合并的边
             for (StreamEdge chainable : chainableOutputs) {
                 transitiveOutEdges.addAll(
                         createChain(
@@ -692,6 +712,8 @@ public class StreamingJobGraphGenerator {
                                 chainEntryPoints));
             }
 
+            // TODO: 遍历当前不可合并的边，添加到最终的所有不可合并边的集合中
+            // TODO: 同时传入的chainInfo是新创建的，也就是新开了一个算子链
             for (StreamEdge nonChainable : nonChainableOutputs) {
                 transitiveOutEdges.add(nonChainable);
                 createChain(
@@ -703,14 +725,20 @@ public class StreamingJobGraphGenerator {
                         chainEntryPoints);
             }
 
+            // TODO: 下面都是一些配置设置，不重要可以跳过
+
+            // TODO: 示例：key=6, value="Sink: Print to Std. Out"；
+            // TODO: key为当前节点的id，value为算子链名称
             chainedNames.put(
                     currentNodeId,
                     createChainedName(
                             currentNodeId,
                             chainableOutputs,
                             Optional.ofNullable(chainEntryPoints.get(currentNodeId))));
+            // TODO: 当前节点最新的资源配置
             chainedMinResources.put(
                     currentNodeId, createChainedMinResources(currentNodeId, chainableOutputs));
+            // TODO: 当前节点的推荐配置资源
             chainedPreferredResources.put(
                     currentNodeId,
                     createChainedPreferredResources(currentNodeId, chainableOutputs));
@@ -730,8 +758,10 @@ public class StreamingJobGraphGenerator {
                         .addOutputFormat(currentOperatorId, currentNode.getOutputFormat());
             }
 
+            // TODO: 重点，如何递归已经返回的起始节点了，那么就创建使用算子链创建了JObVertex；如果还是不是起始节点，那么只是创建一个StreamConfig
             StreamConfig config =
                     currentNodeId.equals(startNodeId)
+                            // TODO: 一个JobVertex就是一个算子链
                             ? createJobVertex(startNodeId, chainInfo)
                             : new StreamConfig(new Configuration());
 

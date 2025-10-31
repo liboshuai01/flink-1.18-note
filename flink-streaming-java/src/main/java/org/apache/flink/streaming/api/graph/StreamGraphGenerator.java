@@ -327,13 +327,13 @@ public class StreamGraphGenerator {
         // TODO: 将生成器中的配置信息，都配置到StreamGraph对象中，并设置到底是批处理还是流处理
         configureStreamGraph(streamGraph);
 
-        // TODO: 记录已经访问过的transformation
+        // TODO: 已经被转换为streamGraph的
         alreadyTransformed = new IdentityHashMap<>();
 
         // TODO: 【重点】这里将所有的transformation转为了StreamNode, StreamNode中又包含StreamEdge（分为InEdges和outEdges）
         // TODO: 这里是循环递归调用
         for (Transformation<?> transformation : transformations) {
-            // TODO:
+            // TODO: 将transformation转为对应的StreamNode、StreamEdge
             transform(transformation);
         }
 
@@ -557,6 +557,7 @@ public class StreamGraphGenerator {
 
         LOG.debug("Transforming " + transform);
 
+        // TODO: 非重点，设置最大并行度
         if (transform.getMaxParallelism() <= 0) {
 
             // TODO: 如果尚未设置最大并行度，那么首先使用 ExecutionConfig 中作业范围的最大并行度。
@@ -568,7 +569,7 @@ public class StreamGraphGenerator {
             }
         }
 
-        // TODO: 解析并注册槽共享组的资源配置，同时校验确保同名组的配置全局一致。
+        // TODO: 非重点，解析并注册槽共享组的资源配置，同时校验确保同名组的配置全局一致。
         transform
                 .getSlotSharingGroup()
                 .ifPresent(
@@ -599,7 +600,7 @@ public class StreamGraphGenerator {
         // call at least once to trigger exceptions about MissingTypeInfo
         transform.getOutputType();
 
-        // TODO: 根据transformation获取不同的翻译器
+        // TODO: 根据transformation获取不同的TransformationTranslator翻译器
         @SuppressWarnings("unchecked")
         final TransformationTranslator<?, Transformation<?>> translator =
                 (TransformationTranslator<?, Transformation<?>>)
@@ -857,7 +858,7 @@ public class StreamGraphGenerator {
         checkNotNull(translator);
         checkNotNull(transform);
 
-        // TODO: 递归查找当前transformation的上一个transformation，如果存在了则直接返回，如果不存在，则进行转换
+        // TODO: 【重点】递归对上一层的transformation进行转换为StreamGramp，不只是字面上的获取父id
         final List<Collection<Integer>> allInputIds = getParentInputIds(transform.getInputs());
 
         // the recursive call might have already transformed this
