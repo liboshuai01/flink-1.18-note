@@ -40,6 +40,7 @@ import static org.apache.flink.util.Preconditions.checkState;
  */
 public class ConsumedPartitionGroup implements Iterable<IntermediateResultPartitionID> {
 
+    // TODO: 分区组中对应的哪些分区
     private final List<IntermediateResultPartitionID> resultPartitions;
 
     private final AtomicInteger unfinishedPartitions;
@@ -51,6 +52,7 @@ public class ConsumedPartitionGroup implements Iterable<IntermediateResultPartit
     /** Number of consumer tasks in the corresponding {@link ConsumerVertexGroup}. */
     private final int numConsumers;
 
+    // TODO: 分区组对应的消费组
     @Nullable private ConsumerVertexGroup consumerVertexGroup;
 
     private ConsumedPartitionGroup(

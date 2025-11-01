@@ -34,10 +34,12 @@ import static org.apache.flink.util.Preconditions.checkState;
  * ConsumedPartitionGroup}.
  */
 public class ConsumerVertexGroup implements Iterable<ExecutionVertexID> {
+    // TODO: 消费组中的有哪些ExecutionVertex
     private final List<ExecutionVertexID> vertices;
 
     private final ResultPartitionType resultPartitionType;
 
+    // TODO: 消费组对应的分区组
     @Nullable private ConsumedPartitionGroup consumedPartitionGroup;
 
     private ConsumerVertexGroup(
