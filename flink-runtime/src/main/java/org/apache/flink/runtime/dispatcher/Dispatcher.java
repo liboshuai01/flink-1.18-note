@@ -544,6 +544,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
                                 "Currently jobs is not supported if parts of the vertices have "
                                         + "resources configured. The limitation will be removed in future versions."));
             } else {
+                // TODO: 进入这里
                 return internalSubmitJob(jobGraph);
             }
         } catch (FlinkException e) {
@@ -610,6 +611,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
         // track as an outstanding job
         submittedAndWaitingTerminationJobIDs.add(jobGraph.getJobID());
 
+        // TODO: 进入 this::persistAndRunJOb
         return waitForTerminatingJob(jobGraph.getJobID(), jobGraph, this::persistAndRunJob)
                 .handle((ignored, throwable) -> handleTermination(jobGraph.getJobID(), throwable))
                 .thenCompose(Function.identity())
@@ -655,6 +657,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
         runJob(createJobMasterRunner(jobGraph), ExecutionType.SUBMISSION);
     }
 
+    // TODO: 根据提交的JobGraph创建JobMaster，并将JobGraph转为ExecutionGraph
     private JobManagerRunner createJobMasterRunner(JobGraph jobGraph) throws Exception {
         Preconditions.checkState(!jobManagerRunnerRegistry.isRegistered(jobGraph.getJobID()));
         return jobManagerRunnerFactory.createJobManagerRunner(
