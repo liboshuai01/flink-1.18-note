@@ -509,6 +509,11 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     // RPCs
     // ------------------------------------------------------
 
+    /*
+    TODO: 整体流程：服务端在启动的时候会启动一个http服务器webMonitor用于接收客户端提交JobGraph的请求；
+        服务端在接收到科黄栓提交的JobGraph请求后，会提取请求中的JobGraph、jar包的数据。
+        然后通过rpc调用请求Dispatcher的submitJob方法，Dispatcher就会对每一个JobGraph创建一个JobMasterRunner.
+     */
     @Override
     public CompletableFuture<Acknowledge> submitJob(JobGraph jobGraph, Time timeout) {
         final JobID jobID = jobGraph.getJobID();
@@ -645,6 +650,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     private void persistAndRunJob(JobGraph jobGraph) throws Exception {
         jobGraphWriter.putJobGraph(jobGraph);
         initJobClientExpiredTime(jobGraph);
+        // TODO: `createJobMasterRunner(jobGraph)`表示每一个JobGraph来都会创建一个JobMaster
         runJob(createJobMasterRunner(jobGraph), ExecutionType.SUBMISSION);
     }
 
